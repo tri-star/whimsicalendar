@@ -1,16 +1,11 @@
-# whimsicalendar
+# Whimsicalendar
 
-適当に予定を登録するとN週間後の空いている休日に勝手に予定を投入。TimeTreeなどと連携。
+## 概要
 
-## Getting Started
+適当に予定を登録するとN週間後の空いている休日に勝手に予定を投入。
+TimeTreeなどと連携する機能も実装する予定。
 
-This project is a starting point for a Flutter application.
+Flutterと設計の練習用。
 
-A few resources to get you started if this is your first Flutter project:
+## 設計方針
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.

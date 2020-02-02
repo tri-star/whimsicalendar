@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:whimsicalendar/pages/top_page.dart';
+import 'package:provider/provider.dart';
+import 'package:whimsicalendar/auth/authenticator_interface.dart';
+import 'package:whimsicalendar/infrastructure/auth/google_authenticator.dart';
+import 'package:whimsicalendar/routes.dart';
+
+import 'pages/top_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,7 +16,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: TopPage(),
+      home: MultiProvider(providers: [
+        Provider<AuthenticatorInterface>(create: (_) => GoogleAuthenticator())
+      ], child: TopPage()),
+      routes: RouteRegistrar().getDefinitions(),
     );
   }
 }

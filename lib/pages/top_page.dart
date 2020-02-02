@@ -21,14 +21,13 @@ class CalendarSection extends StatefulWidget {
 }
 
 class CalendarSectionState extends State<CalendarSection> {
-  User _user = null;
+  Future<User> _user = null;
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((Duration d) async {
-      print('called.');
       var authenticator =
           Provider.of<AuthenticatorInterface>(context, listen: false);
       if (!await authenticator.isAuthenticated()) {
@@ -36,15 +35,32 @@ class CalendarSectionState extends State<CalendarSection> {
         return;
       }
 
-      _user = await authenticator.getUser();
+      _user = authenticator.getUser().then((_) {
+        setState(() {});
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: ListView(
-      children: [Text('ここにカレンダー表示')],
-    ));
+        child: FutureBuilder<User>(
+            future: _user,
+            builder: (context, AsyncSnapshot<User> snapshot) {
+              if (!snapshot.hasData) {
+                return CircularProgressIndicator();
+              }
+              if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
+              }
+
+              return ListView(children: [
+                Text('ユーザーID: ${snapshot.data.id}'),
+                Row(children: [
+                  Text('Photo: '),
+                  Image.network(snapshot.data.photoUrl)
+                ])
+              ]);
+            }));
   }
 }

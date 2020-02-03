@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/domain/user/user.dart';
@@ -21,7 +22,7 @@ class CalendarSection extends StatefulWidget {
 }
 
 class CalendarSectionState extends State<CalendarSection> {
-  Future<User> _user = null;
+  User _user = null;
 
   @override
   void initState() {
@@ -34,9 +35,10 @@ class CalendarSectionState extends State<CalendarSection> {
         Navigator.of(context).pushReplacementNamed('/sign-in');
         return;
       }
-
-      _user = authenticator.getUser().then((_) {
-        setState(() {});
+      authenticator.getUser().then((user) {
+        setState(() {
+          _user = user;
+        });
       });
     });
   }
@@ -44,23 +46,29 @@ class CalendarSectionState extends State<CalendarSection> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: FutureBuilder<User>(
-            future: _user,
-            builder: (context, AsyncSnapshot<User> snapshot) {
-              if (!snapshot.hasData) {
-                return CircularProgressIndicator();
-              }
-              if (snapshot.hasError) {
-                return Text(snapshot.error.toString());
-              }
+        child: CalendarCarousel(
+      onDayPressed: (DateTime date, _) {},
+      thisMonthDayBorderColor: Colors.grey,
+      height: 420.0,
+      selectedDateTime: null,
+      daysHaveCircularBorder: false,
 
-              return ListView(children: [
-                Text('ユーザーID: ${snapshot.data.id}'),
-                Row(children: [
-                  Text('Photo: '),
-                  Image.network(snapshot.data.photoUrl)
-                ])
-              ]);
-            }));
+      /// null for not rendering any border, true for circular border, false for rectangular border
+      markedDatesMap: null,
+//          weekendStyle: TextStyle(
+//            color: Colors.red,
+//          ),
+//          weekDays: null, /// for pass null when you do not want to render weekDays
+      headerText: 'test?',
+    )
+
+//                ListView(children: [
+//                Text('ユーザーID: ${snapshot.data.id}'),
+//                Row(children: [
+//                  Text('Photo: '),
+//                  Image.network(snapshot.data.photoUrl)
+//                ])
+//              ]);
+        );
   }
 }

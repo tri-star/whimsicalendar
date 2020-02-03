@@ -21,12 +21,13 @@ class CalendarSection extends StatefulWidget {
 }
 
 class CalendarSectionState extends State<CalendarSection> {
-  Future<User> _user = null;
+  User _user;
 
   @override
   void initState() {
     super.initState();
 
+    _user = null;
     WidgetsBinding.instance.addPostFrameCallback((Duration d) async {
       var authenticator =
           Provider.of<AuthenticatorInterface>(context, listen: false);
@@ -35,8 +36,10 @@ class CalendarSectionState extends State<CalendarSection> {
         return;
       }
 
-      _user = authenticator.getUser().then((_) {
-        setState(() {});
+      authenticator.getUser().then((user) {
+        setState(() {
+          _user = user;
+        });
       });
     });
   }
@@ -44,23 +47,17 @@ class CalendarSectionState extends State<CalendarSection> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: FutureBuilder<User>(
-            future: _user,
-            builder: (context, AsyncSnapshot<User> snapshot) {
-              if (!snapshot.hasData) {
-                return CircularProgressIndicator();
-              }
-              if (snapshot.hasError) {
-                return Text(snapshot.error.toString());
-              }
-
-              return ListView(children: [
-                Text('ユーザーID: ${snapshot.data.id}'),
-                Row(children: [
-                  Text('Photo: '),
-                  Image.network(snapshot.data.photoUrl)
-                ])
-              ]);
-            }));
+        child: ListView(children: [
+      Text('ユーザーID: ${_user?.id}'),
+      Row(children: [
+        Text('Photo: '),
+        Builder(builder: (context) {
+          if (_user == null) {
+            return Text('Loading.,,');
+          }
+          return Image.network(_user.photoUrl);
+        }),
+      ])
+    ]));
   }
 }

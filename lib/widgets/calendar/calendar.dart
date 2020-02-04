@@ -4,28 +4,92 @@ import 'package:whimsicalendar/widgets/calendar/day_iterator.dart';
 /// カレンダーを表示するウィジェット。
 /// 日付部分に予定などを複数件表示可能
 class CalendarView extends StatelessWidget {
+  final DateTime baseDate;
+
+  CalendarView({Key key})
+      : baseDate = DateTime.now(),
+        super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 7,
-      padding: EdgeInsets.all(3),
-      crossAxisSpacing: 0,
-      mainAxisSpacing: 0,
-      childAspectRatio: 0.6,
-      children: _buildCalendarGrid(),
-    );
+    return Column(children: [
+      _buildHeaderSection(),
+      Table(
+        border: TableBorder.all(color: Colors.grey[900], width: 1),
+        children: [..._buildCalendarWeekHeaders(), ..._buildCalendarRows()],
+      )
+    ]);
+  }
+
+  Widget _buildHeaderSection() {
+    String dateTitle = '${baseDate.year}年${baseDate.month}月';
+    return Container(
+        height: 40, padding: EdgeInsets.all(10), child: Text(dateTitle));
+  }
+
+  /// カレンダーの曜日部分のヘッダを生成する
+  List<TableRow> _buildCalendarWeekHeaders() {
+    return [
+      TableRow(children: [
+        TableCell(child: _CalendarWeekdayCell(weekday: 1)),
+        TableCell(child: _CalendarWeekdayCell(weekday: 2)),
+        TableCell(child: _CalendarWeekdayCell(weekday: 3)),
+        TableCell(child: _CalendarWeekdayCell(weekday: 4)),
+        TableCell(child: _CalendarWeekdayCell(weekday: 5)),
+        TableCell(child: _CalendarWeekdayCell(weekday: 6)),
+        TableCell(child: _CalendarWeekdayCell(weekday: 7)),
+      ])
+    ];
   }
 
   /// カレンダーのグリッド部分を生成する
-  List<Widget> _buildCalendarGrid() {
+  List<TableRow> _buildCalendarRows() {
     DateTime baseDate = DateTime.now();
     DayIterator dayIterator = DayIterator(baseDate.year, baseDate.month);
 
-    List<Widget> cells = dayIterator.next().map((DateTime d) {
-      return _CalendarCell(activeMonth: baseDate.month, date: d);
-    }).toList();
+    List<TableRow> rows = [];
+    List<TableCell> cells = [];
+    dayIterator.next().forEach((DateTime day) {
+      cells.add(TableCell(
+          child: _CalendarCell(activeMonth: baseDate.month, date: day)));
+      if (cells.length == 7) {
+        rows.add(TableRow(
+            children: cells,
+            decoration:
+                BoxDecoration(border: Border.all(color: Colors.grey[200]))));
+        cells = [];
+      }
+    });
 
-    return cells;
+    return rows;
+  }
+}
+
+///カレンダーの曜日部分のセル1つ分のウィジェット
+class _CalendarWeekdayCell extends StatelessWidget {
+  final weekday;
+
+  _CalendarWeekdayCell({Key key, this.weekday}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Map<int, String> weekdayMap = {
+      1: '月',
+      2: '火',
+      3: '水',
+      4: '木',
+      5: '金',
+      6: '土',
+      7: '日',
+    };
+
+    return Container(
+        height: 25,
+        alignment: Alignment.center,
+        child: Text(
+          weekdayMap[weekday],
+          style: TextStyle(fontSize: 9),
+        ));
   }
 }
 
@@ -44,10 +108,8 @@ class _CalendarCell extends StatelessWidget {
     }
 
     return Container(
-        padding: EdgeInsets.all(3),
-        height: 200,
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[300], width: 0.5)),
+        padding: EdgeInsets.all(5),
+        height: 80,
         child: Column(children: [
           Text(day,
               style: TextStyle(

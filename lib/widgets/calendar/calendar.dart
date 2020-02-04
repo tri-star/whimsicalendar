@@ -1,24 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:whimsicalendar/widgets/calendar/day_iterator.dart';
 
-/// カレンダーを表示するウィジェット。
-/// 日付部分に予定などを複数件表示可能
-class CalendarView extends StatelessWidget {
-  final DateTime baseDate;
+import 'calendar_controller.dart';
 
-  CalendarView({Key key})
-      : baseDate = DateTime.now(),
+class CalendarView extends StatefulWidget {
+  final CalendarController _controller;
+
+  CalendarView({Key key, CalendarController controller})
+      : _controller = controller,
         super(key: key);
 
   @override
+  State<StatefulWidget> createState() => CalendarViewState(_controller);
+}
+
+/// カレンダーを表示するウィジェット。
+/// 日付部分に予定などを複数件表示可能
+class CalendarViewState extends State<CalendarView> {
+  final DateTime baseDate;
+  CalendarController _controller;
+
+  CalendarViewState(CalendarController controller)
+      : baseDate = DateTime.now(),
+        _controller = controller;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_controller == null) {
+      _controller = new CalendarController();
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      _buildHeaderSection(),
-      Table(
-        border: TableBorder.all(color: Colors.grey[900], width: 1),
-        children: [..._buildCalendarWeekHeaders(), ..._buildCalendarRows()],
-      )
-    ]);
+    return ChangeNotifierProvider.value(
+        value: _controller,
+        child: Column(children: [
+          _buildHeaderSection(),
+          Table(
+            border: TableBorder.all(color: Colors.grey[900], width: 1),
+            children: [..._buildCalendarWeekHeaders(), ..._buildCalendarRows()],
+          )
+        ]));
   }
 
   Widget _buildHeaderSection() {
@@ -51,7 +82,12 @@ class CalendarView extends StatelessWidget {
     List<TableCell> cells = [];
     dayIterator.next().forEach((DateTime day) {
       cells.add(TableCell(
-          child: _CalendarCell(activeMonth: baseDate.month, date: day)));
+          child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTapDown: (_) {
+                _controller.selectedDate = day;
+              },
+              child: _CalendarCell(activeMonth: baseDate.month, date: day))));
       if (cells.length == 7) {
         rows.add(TableRow(
             children: cells,
@@ -74,13 +110,13 @@ class _CalendarWeekdayCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map<int, String> weekdayMap = {
+      7: '日',
       1: '月',
       2: '火',
       3: '水',
       4: '木',
       5: '金',
       6: '土',
-      7: '日',
     };
 
     return Container(
@@ -88,7 +124,7 @@ class _CalendarWeekdayCell extends StatelessWidget {
         alignment: Alignment.center,
         child: Text(
           weekdayMap[weekday],
-          style: TextStyle(fontSize: 9),
+          style: TextStyle(fontSize: 10),
         ));
   }
 }
@@ -110,18 +146,27 @@ class _CalendarCell extends StatelessWidget {
     return Container(
         padding: EdgeInsets.all(5),
         height: 80,
+        alignment: Alignment.centerLeft,
         child: Column(children: [
           Text(day,
               style: TextStyle(
-                fontSize: 9,
+                fontSize: 10,
               )),
           Text(
-            '',
+            _getActiveMessage(
+                Provider.of<CalendarController>(context).selectedDate),
             style: TextStyle(
               fontSize: 9,
             ),
             overflow: TextOverflow.ellipsis,
-          )
+          ),
         ]));
+  }
+
+  String _getActiveMessage(DateTime selectedDate) {
+    if (selectedDate == date) {
+      return '選択中';
+    }
+    return '-';
   }
 }

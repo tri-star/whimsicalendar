@@ -18,11 +18,11 @@ class CalendarView extends StatefulWidget {
 /// カレンダーを表示するウィジェット。
 /// 日付部分に予定などを複数件表示可能
 class CalendarViewState extends State<CalendarView> {
-  final DateTime baseDate;
+  DateTime baseDate;
   CalendarController _controller;
 
   CalendarViewState(CalendarController controller)
-      : baseDate = DateTime.now(),
+      : baseDate = null,
         _controller = controller;
 
   @override
@@ -31,6 +31,7 @@ class CalendarViewState extends State<CalendarView> {
     if (_controller == null) {
       _controller = new CalendarController();
     }
+    baseDate = _controller.currentMonth;
   }
 
   @override
@@ -43,17 +44,65 @@ class CalendarViewState extends State<CalendarView> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
         value: _controller,
-        child: Column(children: [
-          _buildHeaderSection(),
-          Table(
-            border: TableBorder.all(color: Colors.grey[900], width: 1),
-            children: [..._buildCalendarWeekHeaders(), ..._buildCalendarRows()],
-          )
-        ]));
+        child: Consumer(builder: (BuildContext context,
+            CalendarController controller, Widget child) {
+          return GestureDetector(
+              onHorizontalDragEnd: (DragEndDetails detail) {
+                print(detail.velocity.pixelsPerSecond.dx);
+                if (detail.velocity.pixelsPerSecond.dx > 0) {
+                  _controller.goToPrevMonth();
+                } else if (detail.velocity.pixelsPerSecond.dx < 0) {
+                  _controller.goToNextMonth();
+                }
+              },
+              child: AnimatedSwitcher(
+                  duration: Duration(milliseconds: 350),
+                  switchInCurve: Curves.easeIn,
+                  switchOutCurve: Curves.easeOut,
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                    Offset beginOffset;
+                    Offset endOffset;
+
+                    //前の月にスクロール
+                    if (child.key != ValueKey(_controller.currentMonth)) {
+                      beginOffset = Offset(1.0, 0.0);
+                      endOffset = Offset(0.0, 0.0);
+                    } else {
+                      beginOffset = Offset(-1.0, 0.0);
+                      endOffset = Offset(0.0, 0.0);
+                    }
+
+                    if (_controller.scrollDirection == -1) {
+                      beginOffset = beginOffset.scale(-1, 0);
+                      endOffset = endOffset.scale(-1, 0);
+                    }
+
+                    final inAnimation =
+                        Tween<Offset>(begin: beginOffset, end: endOffset)
+                            .animate(animation);
+
+                    return SlideTransition(position: inAnimation, child: child);
+                  },
+                  child: Column(
+                      key: ValueKey<DateTime>(_controller.currentMonth),
+                      children: [
+                        _buildHeaderSection(),
+                        Table(
+                          border: TableBorder.all(
+                              color: Colors.grey[900], width: 1),
+                          children: [
+                            ..._buildCalendarWeekHeaders(),
+                            ..._buildCalendarRows()
+                          ],
+                        )
+                      ])));
+        }));
   }
 
   Widget _buildHeaderSection() {
-    String dateTitle = '${baseDate.year}年${baseDate.month}月';
+    String dateTitle =
+        '${_controller.currentMonth.year}年${_controller.currentMonth.month}月';
     return Container(
         height: 40, padding: EdgeInsets.all(10), child: Text(dateTitle));
   }
@@ -75,8 +124,8 @@ class CalendarViewState extends State<CalendarView> {
 
   /// カレンダーのグリッド部分を生成する
   List<TableRow> _buildCalendarRows() {
-    DateTime baseDate = DateTime.now();
-    DayIterator dayIterator = DayIterator(baseDate.year, baseDate.month);
+    DayIterator dayIterator = DayIterator(
+        _controller.currentMonth.year, _controller.currentMonth.month);
 
     List<TableRow> rows = [];
     List<TableCell> cells = [];
@@ -87,7 +136,8 @@ class CalendarViewState extends State<CalendarView> {
               onTapDown: (_) {
                 _controller.selectedDate = day;
               },
-              child: _CalendarCell(activeMonth: baseDate.month, date: day))));
+              child: _CalendarCell(
+                  activeMonth: _controller.currentMonth.month, date: day))));
       if (cells.length == 7) {
         rows.add(TableRow(
             children: cells,
@@ -110,13 +160,13 @@ class _CalendarWeekdayCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map<int, String> weekdayMap = {
-      7: '日',
-      1: '月',
-      2: '火',
-      3: '水',
-      4: '木',
-      5: '金',
-      6: '土',
+      1: '日',
+      2: '月',
+      3: '火',
+      4: '水',
+      5: '木',
+      6: '金',
+      7: '土',
     };
 
     return Container(
@@ -145,6 +195,8 @@ class _CalendarCell extends StatelessWidget {
 
     return Container(
         padding: EdgeInsets.all(5),
+        decoration: _getContainerDecoration(
+            Provider.of<CalendarController>(context).selectedDate),
         height: 80,
         alignment: Alignment.centerLeft,
         child: Column(children: [
@@ -153,8 +205,7 @@ class _CalendarCell extends StatelessWidget {
                 fontSize: 10,
               )),
           Text(
-            _getActiveMessage(
-                Provider.of<CalendarController>(context).selectedDate),
+            '',
             style: TextStyle(
               fontSize: 9,
             ),
@@ -163,10 +214,12 @@ class _CalendarCell extends StatelessWidget {
         ]));
   }
 
-  String _getActiveMessage(DateTime selectedDate) {
+  BoxDecoration _getContainerDecoration(DateTime selectedDate) {
     if (selectedDate == date) {
-      return '選択中';
+      return BoxDecoration(
+        color: Color.fromARGB(20, 0, 0, 0),
+      );
     }
-    return '-';
+    return BoxDecoration();
   }
 }

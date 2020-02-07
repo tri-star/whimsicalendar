@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:whimsicalendar/widgets/calendar/day_iterator.dart';
 
 import 'calendar_controller.dart';
+import 'calendar_switcher.dart';
 
 class CalendarView extends StatefulWidget {
   final CalendarController _controller;
@@ -47,44 +48,11 @@ class CalendarViewState extends State<CalendarView> {
         child: Consumer(builder: (BuildContext context,
             CalendarController controller, Widget child) {
           return GestureDetector(
-              onHorizontalDragEnd: (DragEndDetails detail) {
-                print(detail.velocity.pixelsPerSecond.dx);
-                if (detail.velocity.pixelsPerSecond.dx > 0) {
-                  _controller.goToPrevMonth();
-                } else if (detail.velocity.pixelsPerSecond.dx < 0) {
-                  _controller.goToNextMonth();
-                }
-              },
-              child: AnimatedSwitcher(
-                  duration: Duration(milliseconds: 350),
-                  switchInCurve: Curves.easeIn,
-                  switchOutCurve: Curves.easeOut,
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) {
-                    Offset beginOffset;
-                    Offset endOffset;
-
-                    //前の月にスクロール
-                    if (child.key != ValueKey(_controller.currentMonth)) {
-                      beginOffset = Offset(1.0, 0.0);
-                      endOffset = Offset(0.0, 0.0);
-                    } else {
-                      beginOffset = Offset(-1.0, 0.0);
-                      endOffset = Offset(0.0, 0.0);
-                    }
-
-                    if (_controller.scrollDirection == -1) {
-                      beginOffset = beginOffset.scale(-1, 0);
-                      endOffset = endOffset.scale(-1, 0);
-                    }
-
-                    final inAnimation =
-                        Tween<Offset>(begin: beginOffset, end: endOffset)
-                            .animate(animation);
-
-                    return SlideTransition(position: inAnimation, child: child);
-                  },
+              onHorizontalDragEnd: _onHorizontalSwipeEnd,
+              child: CalendarSwitcher.buildAnimatedSwitcher(
+                  controller: _controller,
                   child: Column(
+                      // AnimatedSwitcherが要素を識別するためにKeyが必要
                       key: ValueKey<DateTime>(_controller.currentMonth),
                       children: [
                         _buildHeaderSection(),
@@ -148,6 +116,15 @@ class CalendarViewState extends State<CalendarView> {
     });
 
     return rows;
+  }
+
+  void _onHorizontalSwipeEnd(DragEndDetails detail) {
+    print(detail.velocity.pixelsPerSecond.dx);
+    if (detail.velocity.pixelsPerSecond.dx > 0) {
+      _controller.goToPrevMonth();
+    } else if (detail.velocity.pixelsPerSecond.dx < 0) {
+      _controller.goToNextMonth();
+    }
   }
 }
 

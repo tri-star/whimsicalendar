@@ -154,10 +154,9 @@ class CalendarViewState extends State<CalendarView> {
   }
 
   void _onHorizontalSwipeEnd(DragEndDetails detail) {
-    print(detail.velocity.pixelsPerSecond.dx);
-    if (detail.velocity.pixelsPerSecond.dx > 0) {
+    if (detail.velocity.pixelsPerSecond.dx > 100) {
       _controller.goToPrevMonth();
-    } else if (detail.velocity.pixelsPerSecond.dx < 0) {
+    } else if (detail.velocity.pixelsPerSecond.dx < -100) {
       _controller.goToNextMonth();
     }
   }

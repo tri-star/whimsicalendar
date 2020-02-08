@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:whimsicalendar/widgets/calendar/event_collection.dart';
+
+import 'calendar_event.dart';
 
 /// カレンダーの状態を保持するオブジェクト
-class CalendarController with ChangeNotifier {
+class CalendarController<T extends CalendarEvent> with ChangeNotifier {
   /// スワイプによるスクロールの方向
   int scrollDirection;
 
@@ -11,11 +14,18 @@ class CalendarController with ChangeNotifier {
   /// 現在選択している日付。null = 未選択
   DateTime _selectedDate;
 
-  CalendarController()
+  /// カレンダーのイベント一覧
+  EventCollection<T> _eventCollection;
+
+  CalendarController({EventCollection<T> eventCollection})
       : _currentMonth = null,
-        _selectedDate = null {
+        _selectedDate = null,
+        _eventCollection = eventCollection {
     if (_currentMonth == null) {
       _currentMonth = DateTime.now();
+    }
+    if (_eventCollection == null) {
+      _eventCollection = new EventCollection<T>();
     }
   }
 
@@ -44,6 +54,17 @@ class CalendarController with ChangeNotifier {
     _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1, 1);
     scrollDirection = 1;
     notifyListeners();
+  }
+
+  /// 指定した日にイベントを追加する
+  void addEvent(DateTime date, T event) {
+    _eventCollection.addEvent(date, event);
+    notifyListeners();
+  }
+
+  /// 指定された日のイベントの一覧を返す
+  List<T> getEventsOn(DateTime date) {
+    return _eventCollection.getEventsOn(date);
   }
 
   /// 指定したキーが次の月を指しているかを返す

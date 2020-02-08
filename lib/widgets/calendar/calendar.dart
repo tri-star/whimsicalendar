@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:whimsicalendar/widgets/calendar/day_iterator.dart';
 
 import 'calendar_controller.dart';
+import 'calendar_event.dart';
 import 'calendar_switcher.dart';
 
 /// カレンダーを表示するウィジェット。
@@ -30,7 +31,7 @@ class CalendarViewState extends State<CalendarView> {
   void initState() {
     super.initState();
     if (_controller == null) {
-      _controller = new CalendarController();
+      _controller = new CalendarController<CalendarEvent>();
     }
     baseDate = _controller.currentMonth;
   }

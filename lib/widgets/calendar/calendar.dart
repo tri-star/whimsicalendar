@@ -98,14 +98,7 @@ class CalendarViewState extends State<CalendarView> {
     List<TableRow> rows = [];
     List<TableCell> cells = [];
     dayIterator.next().forEach((DateTime day) {
-      cells.add(TableCell(
-          child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTapDown: (_) {
-                _controller.selectedDate = day;
-              },
-              child: _CalendarCell(
-                  activeMonth: _controller.currentMonth.month, date: day))));
+      cells.add(_buildCalendarDayCell(context: context, date: day));
       if (cells.length == 7) {
         rows.add(TableRow(
             children: cells,
@@ -116,6 +109,48 @@ class CalendarViewState extends State<CalendarView> {
     });
 
     return rows;
+  }
+
+  TableCell _buildCalendarDayCell({BuildContext context, DateTime date}) {
+    String day = '';
+    if (date.month == _controller.currentMonth.month) {
+      day = date.day.toString();
+    }
+
+    return TableCell(
+        child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTapDown: (_) {
+              _controller.selectedDate = date;
+            },
+            child: Container(
+                padding: EdgeInsets.all(5),
+                decoration:
+                    _getContainerDecoration(_controller.selectedDate == date),
+                height: 80,
+                alignment: Alignment.centerLeft,
+                child: Column(children: [
+                  Text(day,
+                      style: TextStyle(
+                        fontSize: 10,
+                      )),
+                  Text(
+                    '',
+                    style: TextStyle(
+                      fontSize: 9,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ]))));
+  }
+
+  BoxDecoration _getContainerDecoration(bool isActive) {
+    if (isActive) {
+      return BoxDecoration(
+        color: Color.fromARGB(20, 0, 0, 0),
+      );
+    }
+    return BoxDecoration();
   }
 
   void _onHorizontalSwipeEnd(DragEndDetails detail) {
@@ -153,50 +188,5 @@ class _CalendarWeekdayCell extends StatelessWidget {
           weekdayMap[weekday],
           style: TextStyle(fontSize: 10),
         ));
-  }
-}
-
-/// カレンダーのセル1つ分のウィジェット
-class _CalendarCell extends StatelessWidget {
-  final int activeMonth;
-  final DateTime date;
-
-  _CalendarCell({Key key, this.activeMonth, this.date}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    String day = '';
-    if (date.month == activeMonth) {
-      day = date.day.toString();
-    }
-
-    return Container(
-        padding: EdgeInsets.all(5),
-        decoration: _getContainerDecoration(
-            Provider.of<CalendarController>(context).selectedDate),
-        height: 80,
-        alignment: Alignment.centerLeft,
-        child: Column(children: [
-          Text(day,
-              style: TextStyle(
-                fontSize: 10,
-              )),
-          Text(
-            '',
-            style: TextStyle(
-              fontSize: 9,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ]));
-  }
-
-  BoxDecoration _getContainerDecoration(DateTime selectedDate) {
-    if (selectedDate == date) {
-      return BoxDecoration(
-        color: Color.fromARGB(20, 0, 0, 0),
-      );
-    }
-    return BoxDecoration();
   }
 }

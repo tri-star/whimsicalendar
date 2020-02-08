@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/domain/user/user.dart';
+import 'package:whimsicalendar/widgets/calendar/calendar.dart';
 
 class TopPage extends StatelessWidget {
   @override
@@ -46,18 +47,6 @@ class CalendarSectionState extends State<CalendarSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: ListView(children: [
-      Text('ユーザーID: ${_user?.id}'),
-      Row(children: [
-        Text('Photo: '),
-        Builder(builder: (context) {
-          if (_user == null) {
-            return Text('Loading.,,');
-          }
-          return Image.network(_user.photoUrl);
-        }),
-      ])
-    ]));
+    return Expanded(child: CalendarView());
   }
 }

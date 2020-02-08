@@ -5,6 +5,8 @@ import 'package:whimsicalendar/widgets/calendar/day_iterator.dart';
 import 'calendar_controller.dart';
 import 'calendar_switcher.dart';
 
+/// カレンダーを表示するウィジェット。
+/// 日付部分に予定などを複数件表示可能
 class CalendarView extends StatefulWidget {
   final CalendarController _controller;
 
@@ -16,8 +18,6 @@ class CalendarView extends StatefulWidget {
   State<StatefulWidget> createState() => CalendarViewState(_controller);
 }
 
-/// カレンダーを表示するウィジェット。
-/// 日付部分に予定などを複数件表示可能
 class CalendarViewState extends State<CalendarView> {
   DateTime baseDate;
   CalendarController _controller;
@@ -50,10 +50,10 @@ class CalendarViewState extends State<CalendarView> {
           return GestureDetector(
               onHorizontalDragEnd: _onHorizontalSwipeEnd,
               child: CalendarSwitcher.buildAnimatedSwitcher(
-                  controller: _controller,
+                  controller: controller,
                   child: Column(
                       // AnimatedSwitcherが要素を識別するためにKeyが必要
-                      key: ValueKey<DateTime>(_controller.currentMonth),
+                      key: ValueKey<DateTime>(controller.currentMonth),
                       children: [
                         _buildHeaderSection(),
                         Table(
@@ -68,6 +68,7 @@ class CalendarViewState extends State<CalendarView> {
         }));
   }
 
+  /// カレンダーのヘッダ(年月)を生成する
   Widget _buildHeaderSection() {
     String dateTitle =
         '${_controller.currentMonth.year}年${_controller.currentMonth.month}月';
@@ -111,6 +112,7 @@ class CalendarViewState extends State<CalendarView> {
     return rows;
   }
 
+  /// 日付部分のセル1つ分を生成する
   TableCell _buildCalendarDayCell({BuildContext context, DateTime date}) {
     String day = '';
     if (date.month == _controller.currentMonth.month) {
@@ -153,6 +155,7 @@ class CalendarViewState extends State<CalendarView> {
     return BoxDecoration();
   }
 
+  /// 横方向のスワイプが行われた場合の処理
   void _onHorizontalSwipeEnd(DragEndDetails detail) {
     if (detail.velocity.pixelsPerSecond.dx > 100) {
       _controller.goToPrevMonth();

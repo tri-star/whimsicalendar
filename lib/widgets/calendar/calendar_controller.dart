@@ -3,6 +3,8 @@ import 'package:whimsicalendar/widgets/calendar/event_collection.dart';
 
 import 'calendar_event.dart';
 
+typedef OnDateChangeHandler = void Function(DateTime);
+
 /// カレンダーの状態を保持するオブジェクト
 class CalendarController<T extends CalendarEvent> with ChangeNotifier {
   /// スワイプによるスクロールの方向
@@ -17,15 +19,24 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
   /// カレンダーのイベント一覧
   EventCollection<T> _eventCollection;
 
-  CalendarController({EventCollection<T> eventCollection})
+  /// 日付の選択が変わった場合に呼び出される
+  List<OnDateChangeHandler> _onDateChangeHandlers;
+
+  CalendarController(
+      {EventCollection<T> eventCollection,
+      OnDateChangeHandler onDateChangeHandler})
       : _currentMonth = null,
         _selectedDate = null,
-        _eventCollection = eventCollection {
+        _eventCollection = eventCollection,
+        _onDateChangeHandlers = [] {
     if (_currentMonth == null) {
       _currentMonth = DateTime.now();
     }
     if (_eventCollection == null) {
       _eventCollection = new EventCollection<T>();
+    }
+    if (onDateChangeHandler != null) {
+      _onDateChangeHandlers.add(onDateChangeHandler);
     }
   }
 
@@ -36,6 +47,7 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
 
   set selectedDate(DateTime date) {
     _selectedDate = date;
+    notifyDateChanged();
     notifyListeners();
   }
 
@@ -79,5 +91,11 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
     DateTime prevMonth =
         DateTime(_currentMonth.year, _currentMonth.month - 1, 1);
     return ValueKey(prevMonth) == key;
+  }
+
+  void notifyDateChanged() {
+    _onDateChangeHandlers.forEach((OnDateChangeHandler handler) {
+      handler(_selectedDate);
+    });
   }
 }

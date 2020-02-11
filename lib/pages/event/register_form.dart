@@ -84,6 +84,9 @@ class EventRegisterFormState extends State<EventRegisterForm> {
                             initialValue: '',
                             onChanged: (newValue) => {},
                             decoration: InputDecoration(labelText: 'URL'))),
+                    Expanded(
+                      child: _buildSubmitButtonSection(context, viewModel),
+                    ),
                   ]));
             })));
   }
@@ -204,6 +207,28 @@ class EventRegisterFormState extends State<EventRegisterForm> {
                     textAlign: TextAlign.right,
                   ))))
     ]);
+  }
+
+  Widget _buildSubmitButtonSection(
+      BuildContext context, RegisterFormViewModel viewModel) {
+    return Container(
+        alignment: Alignment.bottomCenter,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            RaisedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('キャンセル'),
+            ),
+            RaisedButton(
+              onPressed: () {},
+              child: Text('登録'),
+            ),
+          ],
+        ));
   }
 
   Future<DateTime> _showDatePickerPopup(DateTime initialDate) async {

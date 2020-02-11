@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:whimsicalendar/widgets/labeled_checkbox.dart';
 
@@ -63,11 +65,25 @@ class EventRegisterFormState extends State<EventRegisterForm> {
                       onChanged: (newValue) => viewModel.name = newValue,
                       decoration: InputDecoration(labelText: 'イベント名'),
                     ),
-                    LabeledCheckBox(
-                        checked: viewModel.isAllDay,
-                        onChanged: (checked) => {viewModel.isAllDay = checked},
-                        child: Text('終日')),
-                    _buildStartDayInput(context, viewModel)
+                    Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: LabeledCheckBox(
+                            checked: viewModel.isAllDay,
+                            onChanged: (checked) =>
+                                {viewModel.isAllDay = checked},
+                            child: Text('終日'))),
+                    Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: _buildStartDayInput(context, viewModel)),
+                    Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        child: _buildEndDayInput(context, viewModel)),
+                    Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        child: TextFormField(
+                            initialValue: '',
+                            onChanged: (newValue) => {},
+                            decoration: InputDecoration(labelText: 'URL'))),
                   ]));
             })));
   }
@@ -108,19 +124,85 @@ class EventRegisterFormState extends State<EventRegisterForm> {
                   decoration: BoxDecoration(
                       border: Border(
                           bottom: BorderSide(width: 1, color: Colors.black))),
-                  child: Text(viewModel.formatDate(viewModel.startDate))))),
+                  child: Text(
+                    viewModel.formatDate(viewModel.startDate),
+                    textAlign: TextAlign.right,
+                  )))),
       Icon(Icons.watch),
       Expanded(
           child: GestureDetector(
               onTap: () async {
-                await _showDateTimePickerPopup(viewModel.startDate);
+                viewModel.startTime =
+                    await _showDateTimePickerPopup(viewModel.startTime);
               },
               child: Container(
                   padding: EdgeInsets.all(5),
                   decoration: BoxDecoration(
                       border: Border(
                           bottom: BorderSide(width: 1, color: Colors.black))),
-                  child: Text(viewModel.formatDate(viewModel.startDate)))))
+                  child: Text(
+                    viewModel.formatTime(viewModel.startTime),
+                    textAlign: TextAlign.right,
+                  ))))
+    ]);
+  }
+
+  // 終了日入力欄を生成する(終日かどうかで入力欄が変化する)
+  Widget _buildEndDayInput(
+      BuildContext context, RegisterFormViewModel viewModel) {
+    if (viewModel.isAllDay) {
+      return Row(children: [
+        SizedBox(width: 100, child: Text('終了日')),
+        Icon(Icons.calendar_today),
+        Expanded(
+            child: GestureDetector(
+                onTap: () async {
+                  viewModel.endDate =
+                      await _showDatePickerPopup(viewModel.endDate);
+                },
+                child: Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(width: 1, color: Colors.black))),
+                    child: Text(viewModel.formatDate(viewModel.endDate)))))
+      ]);
+    }
+
+    return Row(children: [
+      SizedBox(width: 100, child: Text('終了日時')),
+      Icon(Icons.calendar_today),
+      Expanded(
+          child: GestureDetector(
+              onTap: () async {
+                viewModel.endDate =
+                    await _showDatePickerPopup(viewModel.endDate);
+              },
+              child: Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                      border: Border(
+                          bottom: BorderSide(width: 1, color: Colors.black))),
+                  child: Text(
+                    viewModel.formatDate(viewModel.endDate),
+                    textAlign: TextAlign.right,
+                  )))),
+      Icon(Icons.watch),
+      Expanded(
+          child: GestureDetector(
+              onTap: () async {
+                viewModel.endTime =
+                    await _showDateTimePickerPopup(viewModel.endTime);
+              },
+              child: Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                      border: Border(
+                          bottom: BorderSide(width: 1, color: Colors.black))),
+                  child: Text(
+                    viewModel.formatTime(viewModel.endTime),
+                    textAlign: TextAlign.right,
+                  ))))
     ]);
   }
 
@@ -135,11 +217,10 @@ class EventRegisterFormState extends State<EventRegisterForm> {
         lastDate: DateTime(DateTime.now().year + 2));
   }
 
-  Future<DateTime> _showDateTimePickerPopup(DateTime initialTime) async {
-    TimeOfDay time = await showTimePicker(
+  Future<TimeOfDay> _showDateTimePickerPopup(TimeOfDay initialTime) async {
+    return await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
-    return null;
   }
 }

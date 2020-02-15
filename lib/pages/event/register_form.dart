@@ -2,6 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:whimsicalendar/auth/authenticator_interface.dart';
+import 'package:whimsicalendar/infrastructure/auth/google_authenticator.dart';
+import 'package:whimsicalendar/infrastructure/repositories/calendar_event/calendar_repository.dart';
+import 'package:whimsicalendar/usecases/calendar_event/calendar_event_register_use_case.dart';
 import 'package:whimsicalendar/widgets/labeled_checkbox.dart';
 
 import 'register_form_view_model.dart';
@@ -50,8 +54,18 @@ class EventRegisterFormState extends State<EventRegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (_) => RegisterFormViewModel(widget.currentDate),
+    return MultiProvider(
+        providers: [
+          Provider<AuthenticatorInterface>(
+              create: (_) => GoogleAuthenticator()),
+          Provider<CalendarEventRegisterUseCase>(
+              create: (BuildContext context) {
+            return CalendarEventRegisterUseCase(CalendarEventRepository());
+          }),
+          ChangeNotifierProvider<RegisterFormViewModel>(
+              create: (context) =>
+                  RegisterFormViewModel(context, widget.currentDate)),
+        ],
         child: Padding(
             padding: EdgeInsets.all(10),
             child: Consumer<RegisterFormViewModel>(builder:
@@ -61,7 +75,7 @@ class EventRegisterFormState extends State<EventRegisterForm> {
                   key: _formKey,
                   child: Column(children: [
                     TextFormField(
-                      initialValue: viewModel.name,
+                      controller: viewModel.nameController,
                       onChanged: (newValue) => viewModel.name = newValue,
                       decoration: InputDecoration(labelText: 'イベント名'),
                     ),
@@ -81,7 +95,7 @@ class EventRegisterFormState extends State<EventRegisterForm> {
                     Padding(
                         padding: EdgeInsets.only(top: 20),
                         child: TextFormField(
-                            initialValue: '',
+                            controller: viewModel.urlController,
                             onChanged: (newValue) => {},
                             decoration: InputDecoration(labelText: 'URL'))),
                     Expanded(
@@ -224,7 +238,9 @@ class EventRegisterFormState extends State<EventRegisterForm> {
               child: Text('キャンセル'),
             ),
             RaisedButton(
-              onPressed: () {},
+              onPressed: () {
+                viewModel.registerEvent();
+              },
               child: Text('登録'),
             ),
           ],

@@ -1,12 +1,19 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/infrastructure/auth/google_authenticator.dart';
+import 'package:whimsicalendar/infrastructure/firebase/firebase_app.dart';
 import 'package:whimsicalendar/routes.dart';
 
 import 'pages/top_page.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  FirebaseAppInitializer firebaseAppInitializer = FirebaseAppInitializer();
+  FirebaseApp firebaseApp = await firebaseAppInitializer.initialize();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override

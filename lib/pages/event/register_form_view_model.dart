@@ -1,13 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/domain/calendar/calendar_event.dart';
+import 'package:whimsicalendar/usecases/calendar_event/calendar_event_register_use_case.dart';
 
 class RegisterFormViewModel with ChangeNotifier {
+  BuildContext _context;
   CalendarEvent _event;
 
-  RegisterFormViewModel(DateTime currentDate) : _event = CalendarEvent() {
+  TextEditingController nameController;
+  TextEditingController urlController;
+
+  RegisterFormViewModel(BuildContext context, DateTime currentDate)
+      : _event = CalendarEvent() {
+    _context = context;
     _event.startDateTime = currentDate;
+    nameController = TextEditingController();
+    urlController = TextEditingController();
   }
 
   String get name => _event.name;
@@ -17,13 +28,13 @@ class RegisterFormViewModel with ChangeNotifier {
   }
 
   bool get isAllDay => _event.isAllDay;
-  void set isAllDay(bool value) {
+  set isAllDay(bool value) {
     _event.isAllDay = value;
     notifyListeners();
   }
 
   DateTime get startDate => _event.getStartDate();
-  void set startDate(DateTime newDate) {
+  set startDate(DateTime newDate) {
     if (newDate == null) {
       return;
     }
@@ -32,7 +43,7 @@ class RegisterFormViewModel with ChangeNotifier {
   }
 
   DateTime get endDate => _event.getEndDate();
-  void set endDate(DateTime newDate) {
+  set endDate(DateTime newDate) {
     if (newDate == null) {
       return;
     }
@@ -48,7 +59,7 @@ class RegisterFormViewModel with ChangeNotifier {
     return TimeOfDay(hour: date.hour, minute: date.minute);
   }
 
-  void set startTime(TimeOfDay time) {
+  set startTime(TimeOfDay time) {
     if (time == null) {
       return;
     }
@@ -70,7 +81,7 @@ class RegisterFormViewModel with ChangeNotifier {
     return TimeOfDay(hour: date.hour, minute: date.minute);
   }
 
-  void set endTime(TimeOfDay time) {
+  set endTime(TimeOfDay time) {
     _event.endDateTime = DateTime(
         _event.endDateTime.year,
         _event.endDateTime.month,
@@ -94,5 +105,24 @@ class RegisterFormViewModel with ChangeNotifier {
     }
     NumberFormat timeFormat = NumberFormat('00');
     return '${timeFormat.format(time.hour)}:${timeFormat.format(time.minute)}';
+  }
+
+  /// イベントの登録を実行する
+  void registerEvent() async {
+    AuthenticatorInterface authenticator =
+        Provider.of<AuthenticatorInterface>(_context, listen: false);
+    CalendarEventRegisterUseCase useCase =
+        Provider.of<CalendarEventRegisterUseCase>(_context, listen: false);
+
+    try {
+      await useCase.execute(await authenticator.getUser(), _event);
+
+      nameController.clear();
+      urlController.clear();
+      _event = CalendarEvent();
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
   }
 }

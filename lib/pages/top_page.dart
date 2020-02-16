@@ -4,15 +4,34 @@ import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/domain/user/user.dart';
 import 'package:whimsicalendar/widgets/calendar/calendar.dart';
 
+import 'calendar/calendar_view_model.dart';
+import 'event/register_form.dart';
+
+/// トップページ
 class TopPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Whisimicalendar')),
-      body: Column(children: [CalendarSection()]),
-      floatingActionButton:
-          FloatingActionButton(onPressed: () => {}, child: Icon(Icons.add)),
-    );
+    return MultiProvider(
+        providers: [
+          Provider<CalendarViewModel>(create: (_) => CalendarViewModel())
+        ],
+        child: Builder(builder: (BuildContext context) {
+          return Scaffold(
+            appBar: AppBar(title: Text('Whisimicalendar')),
+            body: Column(children: [CalendarSection()]),
+            floatingActionButton: FloatingActionButton(
+                onPressed: () => _onFloatingActionButtonPressed(context),
+                child: Icon(Icons.add)),
+          );
+        }));
+  }
+
+  /// FABを押下した時の動作
+  void _onFloatingActionButtonPressed(BuildContext context) {
+    Navigator.of(context).pushNamed('/event/add',
+        arguments: EventRegisterPageArguments(
+            currentDate: Provider.of<CalendarViewModel>(context, listen: false)
+                .currentDate));
   }
 }
 
@@ -47,6 +66,9 @@ class CalendarSectionState extends State<CalendarSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(child: CalendarView());
+    return Expanded(
+        child: CalendarView(
+            controller: Provider.of<CalendarViewModel>(context, listen: false)
+                .calendarController));
   }
 }

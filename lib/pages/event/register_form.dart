@@ -40,8 +40,6 @@ class EventRegisterForm extends StatefulWidget {
 }
 
 class EventRegisterFormState extends State<EventRegisterForm> {
-  GlobalKey<FormState> _formKey;
-
   @override
   void initState() {
     super.initState();
@@ -72,10 +70,11 @@ class EventRegisterFormState extends State<EventRegisterForm> {
                 (BuildContext context, RegisterFormViewModel viewModel,
                     Widget _) {
               return Form(
-                  key: _formKey,
+                  key: viewModel.formKey,
                   child: Column(children: [
                     TextFormField(
                       controller: viewModel.nameController,
+                      validator: (_) => viewModel.validateName(),
                       onChanged: (newValue) => viewModel.name = newValue,
                       decoration: InputDecoration(labelText: 'イベント名'),
                     ),

@@ -10,6 +10,7 @@ class RegisterFormViewModel with ChangeNotifier {
   BuildContext _context;
   CalendarEvent _event;
 
+  GlobalKey<FormState> formKey;
   TextEditingController nameController;
   TextEditingController urlController;
 
@@ -17,6 +18,7 @@ class RegisterFormViewModel with ChangeNotifier {
       : _event = CalendarEvent() {
     _context = context;
     _event.startDateTime = currentDate;
+    formKey = GlobalKey<FormState>();
     nameController = TextEditingController();
     urlController = TextEditingController();
   }
@@ -107,6 +109,24 @@ class RegisterFormViewModel with ChangeNotifier {
     return '${timeFormat.format(time.hour)}:${timeFormat.format(time.minute)}';
   }
 
+  /// 氏名のバリデーション
+  String validateName() {
+    var errors = _event.validateName();
+    if (errors.length == 0) {
+      return null;
+    }
+    return errors.join("\n");
+  }
+
+  /// 開始日時のバリデーション
+  String validateStartDateTime() {
+    var errors = _event.validateStartDateTime();
+    if (errors.length == 0) {
+      return null;
+    }
+    return errors.join("\n");
+  }
+
   /// イベントの登録を実行する
   void registerEvent() async {
     AuthenticatorInterface authenticator =
@@ -115,11 +135,13 @@ class RegisterFormViewModel with ChangeNotifier {
         Provider.of<CalendarEventRegisterUseCase>(_context, listen: false);
 
     try {
-      await useCase.execute(await authenticator.getUser(), _event);
+      if (formKey.currentState.validate()) {
+        await useCase.execute(await authenticator.getUser(), _event);
 
-      nameController.clear();
-      urlController.clear();
-      _event = CalendarEvent();
+        nameController.clear();
+        urlController.clear();
+        _event = CalendarEvent();
+      }
       notifyListeners();
     } catch (e) {
       print(e);

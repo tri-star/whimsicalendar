@@ -14,7 +14,10 @@ jobs:
       with:
         flutter-version: '1.12.13+hotfix.5'
     - run: flutter pub get
-    - run: flutter test
+    - run: flutter test --coverage
+    - env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      run: bash <(curl -s https://codecov.io/bash) -f coverage/lcov.info
       
   build:
     runs-on: ubuntu-latest

@@ -1,6 +1,7 @@
 # Whimsicalendar
 
 ![CI](https://github.com/tri-star/whimsicalendar/workflows/CI/badge.svg)
+[![codecov](https://codecov.io/gh/tri-star/whimsicalendar/branch/master/graph/badge.svg)](https://codecov.io/gh/tri-star/whimsicalendar)
 
 ## 概要
 

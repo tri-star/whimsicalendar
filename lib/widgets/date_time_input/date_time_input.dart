@@ -7,13 +7,17 @@ class DateTimeInput extends FormField<DateTime> {
   final DateTime baseDateTime;
   final void Function(DateTime) onDateChanged;
   final void Function(TimeOfDay) onTimeChanged;
+  Future<DateTime> Function(BuildContext, DateTime) onDatePickerPopup;
+  Future<TimeOfDay> Function(BuildContext, TimeOfDay) onTimePickerPopup;
 
   DateTimeInput(
       {Key key,
       this.label = '',
       this.baseDateTime,
       this.onDateChanged = null,
-      this.onTimeChanged = null})
+      this.onTimeChanged = null,
+      this.onDatePickerPopup = null,
+      this.onTimePickerPopup = null})
       : super(
             initialValue: baseDateTime,
             onSaved: null,
@@ -30,7 +34,7 @@ class DateTimeInput extends FormField<DateTime> {
                 Expanded(
                     child: GestureDetector(
                         onTap: () async {
-                          DateTime date = await _showDatePickerPopup(
+                          DateTime date = await onDatePickerPopup(
                               field.context, baseDateTime);
                           onDateChanged(date);
                         },
@@ -49,7 +53,7 @@ class DateTimeInput extends FormField<DateTime> {
                 Expanded(
                     child: GestureDetector(
                         onTap: () async {
-                          TimeOfDay time = await _showDateTimePickerPopup(
+                          TimeOfDay time = await onTimePickerPopup(
                               field.context, initialTime);
                           if (onTimeChanged != null) {
                             onTimeChanged(time);
@@ -66,7 +70,14 @@ class DateTimeInput extends FormField<DateTime> {
                               textAlign: TextAlign.right,
                             ))))
               ]);
-            });
+            }) {
+    if (onDatePickerPopup == null) {
+      onDatePickerPopup = _showDatePickerPopup;
+    }
+    if (onTimePickerPopup == null) {
+      onTimePickerPopup = _showDateTimePickerPopup;
+    }
+  }
 
   /// 日付のPickerを表示する
   static Future<DateTime> _showDatePickerPopup(

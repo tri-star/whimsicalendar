@@ -16,8 +16,8 @@ class DateTimeInput extends FormField<DateTime> {
       this.baseDateTime,
       this.onDateChanged = null,
       this.onTimeChanged = null,
-      this.onDatePickerPopup = null,
-      this.onTimePickerPopup = null})
+      this.onDatePickerPopup = _showDatePickerPopup,
+      this.onTimePickerPopup = _showDateTimePickerPopup})
       : super(
             initialValue: baseDateTime,
             onSaved: null,
@@ -70,14 +70,7 @@ class DateTimeInput extends FormField<DateTime> {
                               textAlign: TextAlign.right,
                             ))))
               ]);
-            }) {
-    if (onDatePickerPopup == null) {
-      onDatePickerPopup = _showDatePickerPopup;
-    }
-    if (onTimePickerPopup == null) {
-      onTimePickerPopup = _showDateTimePickerPopup;
-    }
-  }
+            });
 
   /// 日付のPickerを表示する
   static Future<DateTime> _showDatePickerPopup(

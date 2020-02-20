@@ -6,6 +6,7 @@ import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/infrastructure/auth/google_authenticator.dart';
 import 'package:whimsicalendar/infrastructure/repositories/calendar_event/calendar_repository.dart';
 import 'package:whimsicalendar/usecases/calendar_event/calendar_event_register_use_case.dart';
+import 'package:whimsicalendar/widgets/date_time_input/date_time_input.dart';
 import 'package:whimsicalendar/widgets/labeled_checkbox.dart';
 
 import 'register_form_view_model.dart';
@@ -126,41 +127,11 @@ class EventRegisterFormState extends State<EventRegisterForm> {
       ]);
     }
 
-    return Row(children: [
-      SizedBox(width: 100, child: Text('開始日時')),
-      Icon(Icons.calendar_today),
-      Expanded(
-          child: GestureDetector(
-              onTap: () async {
-                viewModel.startDate =
-                    await _showDatePickerPopup(viewModel.startDate);
-              },
-              child: Container(
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(width: 1, color: Colors.black))),
-                  child: Text(
-                    viewModel.formatDate(viewModel.startDate),
-                    textAlign: TextAlign.right,
-                  )))),
-      Icon(Icons.watch),
-      Expanded(
-          child: GestureDetector(
-              onTap: () async {
-                viewModel.startTime =
-                    await _showDateTimePickerPopup(viewModel.startTime);
-              },
-              child: Container(
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(width: 1, color: Colors.black))),
-                  child: Text(
-                    viewModel.formatTime(viewModel.startTime),
-                    textAlign: TextAlign.right,
-                  ))))
-    ]);
+    return DateTimeInput(
+      baseDateTime: viewModel.startDateTime,
+      onDateChanged: (DateTime date) => viewModel.startDate = date,
+      onTimeChanged: (TimeOfDay time) => viewModel.startTime = time,
+    );
   }
 
   // 終了日入力欄を生成する(終日かどうかで入力欄が変化する)
@@ -185,41 +156,11 @@ class EventRegisterFormState extends State<EventRegisterForm> {
       ]);
     }
 
-    return Row(children: [
-      SizedBox(width: 100, child: Text('終了日時')),
-      Icon(Icons.calendar_today),
-      Expanded(
-          child: GestureDetector(
-              onTap: () async {
-                viewModel.endDate =
-                    await _showDatePickerPopup(viewModel.endDate);
-              },
-              child: Container(
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(width: 1, color: Colors.black))),
-                  child: Text(
-                    viewModel.formatDate(viewModel.endDate),
-                    textAlign: TextAlign.right,
-                  )))),
-      Icon(Icons.watch),
-      Expanded(
-          child: GestureDetector(
-              onTap: () async {
-                viewModel.endTime =
-                    await _showDateTimePickerPopup(viewModel.endTime);
-              },
-              child: Container(
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(width: 1, color: Colors.black))),
-                  child: Text(
-                    viewModel.formatTime(viewModel.endTime),
-                    textAlign: TextAlign.right,
-                  ))))
-    ]);
+    return DateTimeInput(
+      baseDateTime: viewModel.endDateTime,
+      onDateChanged: (DateTime date) => viewModel.endDate = date,
+      onTimeChanged: (TimeOfDay time) => viewModel.endTime = time,
+    );
   }
 
   Widget _buildSubmitButtonSection(

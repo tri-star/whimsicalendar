@@ -35,6 +35,8 @@ class RegisterFormViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  DateTime get startDateTime => _event.startDateTime;
+
   DateTime get startDate => _event.getStartDate();
   set startDate(DateTime newDate) {
     if (newDate == null) {
@@ -44,6 +46,7 @@ class RegisterFormViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  DateTime get endDateTime => _event.endDateTime;
   DateTime get endDate => _event.getEndDate();
   set endDate(DateTime newDate) {
     if (newDate == null) {

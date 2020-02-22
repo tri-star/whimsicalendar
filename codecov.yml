@@ -5,3 +5,13 @@ coverage:
   precision: 2
   round: down
   range: "50...100"
+  status:
+    project:
+      flutter:
+        target: 70%
+        threshold: 70%
+        base: auto
+        flags:
+          - flutter
+        paths:
+          - "lib"

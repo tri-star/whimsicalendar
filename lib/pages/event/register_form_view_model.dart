@@ -135,7 +135,7 @@ class RegisterFormViewModel with ChangeNotifier {
   }
 
   /// イベントの登録を実行する
-  void registerEvent() async {
+  Future<bool> registerEvent() async {
     AuthenticatorInterface authenticator =
         Provider.of<AuthenticatorInterface>(_context, listen: false);
     CalendarEventRegisterUseCase useCase =
@@ -143,7 +143,7 @@ class RegisterFormViewModel with ChangeNotifier {
 
     try {
       if (!formKey.currentState.validate()) {
-        return;
+        return false;
       }
       await useCase.execute(await authenticator.getUser(), _event);
       nameController.clear();
@@ -154,6 +154,8 @@ class RegisterFormViewModel with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print(e);
+      return false;
     }
+    return true;
   }
 }

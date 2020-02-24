@@ -17,21 +17,26 @@ class TopPage extends StatelessWidget {
         ],
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
-            appBar: AppBar(title: Text('Whisimicalendar')),
-            body: Column(children: [CalendarSection()]),
-            floatingActionButton: FloatingActionButton(
-                onPressed: () => _onFloatingActionButtonPressed(context),
-                child: Icon(Icons.add)),
-          );
+              appBar: AppBar(title: Text('Whisimicalendar')),
+              body: Column(children: [CalendarSection()]),
+              floatingActionButton: Builder(builder: (BuildContext context) {
+                return FloatingActionButton(
+                    onPressed: () => _onFloatingActionButtonPressed(context),
+                    child: Icon(Icons.add));
+              }));
         }));
   }
 
   /// FABを押下した時の動作
-  void _onFloatingActionButtonPressed(BuildContext context) {
-    Navigator.of(context).pushNamed('/event/add',
+  void _onFloatingActionButtonPressed(BuildContext context) async {
+    final registered = await Navigator.of(context).pushNamed('/event/add',
         arguments: EventRegisterPageArguments(
             currentDate: Provider.of<CalendarViewModel>(context, listen: false)
                 .currentDate));
+
+    if (registered == true) {
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text('登録しました。')));
+    }
   }
 }
 

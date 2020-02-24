@@ -187,13 +187,16 @@ class EventRegisterFormState extends State<EventRegisterForm> {
           children: [
             RaisedButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(false);
               },
               child: Text('キャンセル'),
             ),
             RaisedButton(
-              onPressed: () {
-                viewModel.registerEvent();
+              onPressed: () async {
+                final bool succeed = await viewModel.registerEvent();
+                if (succeed) {
+                  Navigator.of(context).pop(true);
+                }
               },
               child: Text('登録'),
             ),

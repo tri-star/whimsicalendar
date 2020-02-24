@@ -15,3 +15,13 @@ coverage:
           - flutter
         paths:
           - "lib"
+    patch:
+      default:
+        # basic
+        target: 70%
+        threshold: 0%
+        base: auto
+        flags:
+          - "flutter"
+        paths:
+          - "lib"

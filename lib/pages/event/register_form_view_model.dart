@@ -10,6 +10,7 @@ class RegisterFormViewModel with ChangeNotifier {
   BuildContext _context;
   CalendarEvent _event;
 
+  GlobalKey<FormState> formKey;
   TextEditingController nameController;
   TextEditingController urlController;
 
@@ -17,6 +18,7 @@ class RegisterFormViewModel with ChangeNotifier {
       : _event = CalendarEvent() {
     _context = context;
     _event.startDateTime = currentDate;
+    formKey = GlobalKey<FormState>();
     nameController = TextEditingController();
     urlController = TextEditingController();
   }
@@ -33,6 +35,8 @@ class RegisterFormViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  DateTime get startDateTime => _event.startDateTime;
+
   DateTime get startDate => _event.getStartDate();
   set startDate(DateTime newDate) {
     if (newDate == null) {
@@ -42,6 +46,7 @@ class RegisterFormViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  DateTime get endDateTime => _event.endDateTime;
   DateTime get endDate => _event.getEndDate();
   set endDate(DateTime newDate) {
     if (newDate == null) {
@@ -107,22 +112,44 @@ class RegisterFormViewModel with ChangeNotifier {
     return '${timeFormat.format(time.hour)}:${timeFormat.format(time.minute)}';
   }
 
+  /// 氏名のバリデーション
+  String validateName() {
+    var errors = _event.validateName();
+    if (errors.length == 0) {
+      return null;
+    }
+    return errors.join("\n");
+  }
+
+  /// 開始日時のバリデーション
+  String validateStartDateTime() {
+    var errors = _event.validateStartDateTime();
+    if (errors.length == 0) {
+      return null;
+    }
+    return errors.join("\n");
+  }
+
   /// イベントの登録を実行する
-  void registerEvent() async {
+  Future<bool> registerEvent() async {
     AuthenticatorInterface authenticator =
         Provider.of<AuthenticatorInterface>(_context, listen: false);
     CalendarEventRegisterUseCase useCase =
         Provider.of<CalendarEventRegisterUseCase>(_context, listen: false);
 
     try {
+      if (!formKey.currentState.validate()) {
+        return false;
+      }
       await useCase.execute(await authenticator.getUser(), _event);
-
       nameController.clear();
       urlController.clear();
-      _event = CalendarEvent();
+      name = '';
       notifyListeners();
     } catch (e) {
       print(e);
+      return false;
     }
+    return true;
   }
 }

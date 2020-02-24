@@ -128,10 +128,15 @@ class EventRegisterFormState extends State<EventRegisterForm> {
     }
 
     return DateTimeInput(
-      baseDateTime: viewModel.startDateTime,
-      onDateChanged: (DateTime date) => viewModel.startDate = date,
-      onTimeChanged: (TimeOfDay time) => viewModel.startTime = time,
-    );
+        label: '開始日時',
+        state: viewModel.startDateTimeState,
+        initialValue: widget.currentDate,
+        onDateChanged: (DateTime date) => viewModel.startDate = date,
+        onTimeChanged: (TimeOfDay time) => viewModel.startTime = time,
+        validator: (DateTime dateTime) {
+          if (dateTime == null) return '開始日時は必ず入力してください。';
+          return null;
+        });
   }
 
   // 終了日入力欄を生成する(終日かどうかで入力欄が変化する)
@@ -157,10 +162,19 @@ class EventRegisterFormState extends State<EventRegisterForm> {
     }
 
     return DateTimeInput(
-      baseDateTime: viewModel.endDateTime,
-      onDateChanged: (DateTime date) => viewModel.endDate = date,
-      onTimeChanged: (TimeOfDay time) => viewModel.endTime = time,
-    );
+        label: '終了日時',
+        initialValue: widget.currentDate,
+        state: viewModel.endDateTimeState,
+        onDateChanged: (DateTime date) => viewModel.endDate = date,
+        onTimeChanged: (TimeOfDay time) => viewModel.endTime = time,
+        validator: (DateTime dateTime) {
+          if (dateTime == null) return '終了日時は必ず入力してください。';
+          if (viewModel.startDateTime != null &&
+              dateTime.isBefore(viewModel.startDateTime)) {
+            return '終了日時は開始日時以降を指定してください。';
+          }
+          return null;
+        });
   }
 
   Widget _buildSubmitButtonSection(
@@ -196,12 +210,5 @@ class EventRegisterFormState extends State<EventRegisterForm> {
         initialDate: initialDate,
         firstDate: DateTime(DateTime.now().year),
         lastDate: DateTime(DateTime.now().year + 2));
-  }
-
-  Future<TimeOfDay> _showDateTimePickerPopup(TimeOfDay initialTime) async {
-    return await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
   }
 }

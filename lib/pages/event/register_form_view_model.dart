@@ -13,6 +13,8 @@ class RegisterFormViewModel with ChangeNotifier {
   GlobalKey<FormState> formKey;
   TextEditingController nameController;
   TextEditingController urlController;
+  FormFieldState<DateTime> startDateTimeState;
+  FormFieldState<DateTime> endDateTimeState;
 
   RegisterFormViewModel(BuildContext context, DateTime currentDate)
       : _event = CalendarEvent() {
@@ -21,6 +23,8 @@ class RegisterFormViewModel with ChangeNotifier {
     formKey = GlobalKey<FormState>();
     nameController = TextEditingController();
     urlController = TextEditingController();
+    startDateTimeState = FormFieldState<DateTime>();
+    endDateTimeState = FormFieldState<DateTime>();
   }
 
   String get name => _event.name;
@@ -138,13 +142,15 @@ class RegisterFormViewModel with ChangeNotifier {
         Provider.of<CalendarEventRegisterUseCase>(_context, listen: false);
 
     try {
-      if (formKey.currentState.validate()) {
-        await useCase.execute(await authenticator.getUser(), _event);
-
-        nameController.clear();
-        urlController.clear();
-        _event = CalendarEvent();
+      if (!formKey.currentState.validate()) {
+        return;
       }
+      await useCase.execute(await authenticator.getUser(), _event);
+      nameController.clear();
+      urlController.clear();
+      startDateTimeState.reset();
+      endDateTimeState.reset();
+      name = '';
       notifyListeners();
     } catch (e) {
       print(e);

@@ -29,7 +29,7 @@ void main() {
         DateTime expectedDate = DateTime(2020, 1, 1);
         await tester.pumpWidget(_wrapDateTimeInput(DateTimeInput(
           label: '日時',
-          baseDateTime: expectedDate,
+          initialValue: expectedDate,
         )));
         Text dateInput = _getDateInputFromDateTimeInput(tester);
         expect(dateInput.data, '2020-01-01');
@@ -39,7 +39,7 @@ void main() {
         DateTime expectedDate = DateTime(2020, 1, 1, 10, 20, 35);
         await tester.pumpWidget(_wrapDateTimeInput(DateTimeInput(
           label: '日時',
-          baseDateTime: expectedDate,
+          initialValue: expectedDate,
         )));
         Text dateInput = _getTimeInputFromDateTimeInput(tester);
         expect(dateInput.data, '10:20');
@@ -71,6 +71,7 @@ void main() {
       TimeOfDay selectedTime = null;
       await tester.pumpWidget(_wrapDateTimeInput(DateTimeInput(
         label: '日時',
+        initialValue: DateTime(2000, 01, 01, 0, 0),
         onTimePickerPopup: (BuildContext context, TimeOfDay time) async {
           return TimeOfDay(hour: 1, minute: 2);
         },

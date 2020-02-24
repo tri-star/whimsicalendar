@@ -9,12 +9,6 @@ class DateTimeInput extends FormField<DateTime> {
   final Future<DateTime> Function(BuildContext, DateTime) onDatePickerPopup;
   final Future<TimeOfDay> Function(BuildContext, TimeOfDay) onTimePickerPopup;
 
-  /// 表示している値はFormFieldStateで管理されるが、
-  /// この値を外部から操作したいケースがあるため外部から受け取れるようにする。
-  /// 今の実装ではFormFieldState.resetが呼び出された時、onDateChanged等を呼び出す仕組みが実装されていないので不完全。
-  /// (正しく実装するとTextFormFieldとTextEditingControllerのようになると思われる)
-  final FormFieldState<DateTime> state;
-
   DateTimeInput(
       {Key key,
       this.label = '',
@@ -24,8 +18,7 @@ class DateTimeInput extends FormField<DateTime> {
       validator = null,
       onSaved = null,
       this.onDatePickerPopup = _showDatePickerPopup,
-      this.onTimePickerPopup = _showDateTimePickerPopup,
-      this.state})
+      this.onTimePickerPopup = _showDateTimePickerPopup})
       : super(
             initialValue: initialValue,
             onSaved: onSaved,
@@ -99,9 +92,6 @@ class DateTimeInput extends FormField<DateTime> {
                     _buildErrorMessage(field)
                   ]);
             });
-
-  @override
-  FormFieldState<DateTime> createState() => state ?? super.createState();
 
   /// エラーメッセージを返す
   static Widget _buildErrorMessage(FormFieldState<DateTime> fieldState) {

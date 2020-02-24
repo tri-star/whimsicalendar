@@ -112,7 +112,6 @@ class EventRegisterFormState extends State<EventRegisterForm> {
     if (viewModel.isAllDay) {
       return DateInput(
           label: '開始日',
-          state: viewModel.startDateState,
           initialValue: widget.currentDate,
           onDateChanged: (DateTime date) => viewModel.startDate = date,
           validator: (DateTime dateTime) {
@@ -123,7 +122,6 @@ class EventRegisterFormState extends State<EventRegisterForm> {
 
     return DateTimeInput(
         label: '開始日時',
-        state: viewModel.startDateTimeState,
         initialValue: widget.currentDate,
         onDateChanged: (DateTime date) => viewModel.startDate = date,
         onTimeChanged: (TimeOfDay time) => viewModel.startTime = time,
@@ -140,7 +138,6 @@ class EventRegisterFormState extends State<EventRegisterForm> {
       return DateInput(
           label: '終了日',
           initialValue: widget.currentDate,
-          state: viewModel.endDateState,
           onDateChanged: (DateTime date) => viewModel.endDate = date,
           validator: (DateTime dateTime) {
             if (dateTime == null) return '終了日は必ず入力してください。';
@@ -155,7 +152,6 @@ class EventRegisterFormState extends State<EventRegisterForm> {
     return DateTimeInput(
         label: '終了日時',
         initialValue: widget.currentDate,
-        state: viewModel.endDateTimeState,
         onDateChanged: (DateTime date) => viewModel.endDate = date,
         onTimeChanged: (TimeOfDay time) => viewModel.endTime = time,
         validator: (DateTime dateTime) {

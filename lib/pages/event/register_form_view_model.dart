@@ -15,6 +15,8 @@ class RegisterFormViewModel with ChangeNotifier {
   TextEditingController urlController;
   FormFieldState<DateTime> startDateTimeState;
   FormFieldState<DateTime> endDateTimeState;
+  FormFieldState<DateTime> startDateState;
+  FormFieldState<DateTime> endDateState;
 
   RegisterFormViewModel(BuildContext context, DateTime currentDate)
       : _event = CalendarEvent() {
@@ -25,6 +27,8 @@ class RegisterFormViewModel with ChangeNotifier {
     urlController = TextEditingController();
     startDateTimeState = FormFieldState<DateTime>();
     endDateTimeState = FormFieldState<DateTime>();
+    startDateState = FormFieldState<DateTime>();
+    endDateState = FormFieldState<DateTime>();
   }
 
   String get name => _event.name;

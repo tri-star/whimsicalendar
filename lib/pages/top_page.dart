@@ -70,6 +70,16 @@ class CalendarSectionState extends State<CalendarSection> {
   }
 
   @override
+  void didUpdateWidget(CalendarSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    CalendarViewModel viewModel = Provider.of<CalendarViewModel>(context);
+    if (viewModel.shouldUpdateEventList()) {
+      viewModel.loadEventList(context);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Expanded(
         child: CalendarView(

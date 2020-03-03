@@ -69,8 +69,8 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
   }
 
   /// 指定した日にイベントを追加する
-  void addEvent(DateTime date, T event) {
-    _eventCollection.add(event);
+  void setEventCollection(EventCollection collection) {
+    _eventCollection = collection;
     notifyListeners();
   }
 

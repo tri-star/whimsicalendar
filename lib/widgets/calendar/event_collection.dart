@@ -47,6 +47,12 @@ class EventCollection<T extends CalendarEvent> {
     _events.add(event);
   }
 
+  /// イベント一覧を更新する
+  void setList(List<T> list) {
+    _cache = {};
+    _events = list;
+  }
+
   _getKey(int year, int month, int day) {
     var digitFormat = NumberFormat('00');
     return '${year}-${digitFormat.format(month)}-${digitFormat.format(day)}';

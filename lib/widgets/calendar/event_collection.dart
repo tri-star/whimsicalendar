@@ -1,19 +1,54 @@
+import 'package:intl/intl.dart';
 import 'package:whimsicalendar/widgets/calendar/calendar_event.dart';
 
-/// カレンダーのイベントの一覧を管理する
+/// 1か月分のイベントの一覧を保持するクラス
 class EventCollection<T extends CalendarEvent> {
-  Map<DateTime, List<T>> _events;
+  List<T> _events;
+  Map<String, List<T>> _cache;
 
-  /// 指定された日のイベントを全て返す
-  List<T> getEventsOn(DateTime date) {
-    if (!_events.containsKey(date)) {
-      return [];
+  EventCollection()
+      : _events = List<T>(),
+        _cache = {};
+
+  EventCollection.fromList(List<T> events)
+      : _events = events,
+        _cache = {};
+
+  /// 指定された日のイベントの一覧を返す
+  List<T> getEventsOn(int year, int month, int day) {
+    String cacheKey = _getKey(year, month, day);
+    if (_cache.containsKey(cacheKey)) {
+      return _cache[cacheKey];
     }
-    return _events[date];
+
+    _cache[cacheKey] = [];
+
+    DateTime dateFrom = DateTime(year, month, day);
+    DateTime dateTo =
+        DateTime(year, month, day + 1).subtract(Duration(seconds: 1));
+    _events.forEach((CalendarEvent event) {
+      if (event.startDateTime.isBefore(dateFrom) ||
+          event.startDateTime.isAfter(dateTo)) {
+        return;
+      }
+      _cache[cacheKey].add(event);
+    });
+
+    return _cache[cacheKey];
   }
 
-  /// 指定した日にイベントを追加する
-  void addEvent(DateTime date, T event) {
-    _events[date].add(event);
+  /// イベントを追加する
+  void add(T event) {
+    String cacheKey = _getKey(event.startDateTime.year,
+        event.startDateTime.month, event.startDateTime.day);
+    if (_cache.containsKey(cacheKey)) {
+      _cache.remove(cacheKey);
+    }
+    _events.add(event);
+  }
+
+  _getKey(int year, int month, int day) {
+    var digitFormat = NumberFormat('00');
+    return '${year}-${digitFormat.format(month)}-${digitFormat.format(day)}';
   }
 }

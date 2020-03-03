@@ -70,13 +70,13 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
 
   /// 指定した日にイベントを追加する
   void addEvent(DateTime date, T event) {
-    _eventCollection.addEvent(date, event);
+    _eventCollection.add(event);
     notifyListeners();
   }
 
   /// 指定された日のイベントの一覧を返す
   List<T> getEventsOn(DateTime date) {
-    return _eventCollection.getEventsOn(date);
+    return _eventCollection.getEventsOn(date.year, date.month, date.day);
   }
 
   /// 指定したキーが次の月を指しているかを返す

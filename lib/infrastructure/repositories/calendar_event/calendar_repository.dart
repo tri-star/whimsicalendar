@@ -37,11 +37,18 @@ class CalendarEventRepository implements CalendarEventRepositoryInterface {
       result.add(CalendarEvent(
           id: item.documentID,
           name: item['name'],
-          startDateTime: item['startDateTime'],
-          endDateTime: item['endDateTime'],
+          startDateTime: _parseTimeStamp(item['startDateTime']),
+          endDateTime: _parseTimeStamp(item['endDateTime']),
           isAllDay: item['isAllDay']));
     });
 
     return EventCollection<CalendarEvent>.fromList(result);
+  }
+
+  DateTime _parseTimeStamp(Timestamp time) {
+    if (time == null) {
+      return null;
+    }
+    return time.toDate();
   }
 }

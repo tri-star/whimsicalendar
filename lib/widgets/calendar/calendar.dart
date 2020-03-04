@@ -149,9 +149,8 @@ class CalendarViewState extends State<CalendarView> {
 
     List<Widget> eventTitleList = [];
     events.forEach((CalendarEvent e) {
-      print(e.startDateTime);
       eventTitleList.add(Container(
-          padding: EdgeInsets.only(bottom: 5),
+          margin: EdgeInsets.only(bottom: 5),
           color: Colors.green[200],
           child: Text(e.name, style: TextStyle(fontSize: 9))));
     });

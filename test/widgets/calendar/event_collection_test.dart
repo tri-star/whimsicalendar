@@ -73,4 +73,26 @@ void main() {
       expect(events.length, 1);
     });
   });
+
+  group('setList', () {
+    test('セットした内容で更新されること', () {
+      CalendarEvent initialEvent =
+          CalendarEvent(startDateTime: DateTime(2020, 1, 1));
+      List<CalendarEvent> events = [
+        CalendarEvent(startDateTime: DateTime(2020, 1, 2)),
+        CalendarEvent(startDateTime: DateTime(2020, 1, 2, 23, 59, 59)),
+      ];
+      EventCollection collection = EventCollection();
+      collection.add(initialEvent);
+
+      List<CalendarEvent> foundEvents = collection.getEventsOn(2020, 1, 1);
+      expect(foundEvents.length, 1, reason: '初期設定したイベントが取得できません');
+
+      collection.setList(events);
+      foundEvents = collection.getEventsOn(2020, 1, 1);
+      expect(foundEvents.length, 0, reason: '初期設定したイベントが削除されていません');
+      foundEvents = collection.getEventsOn(2020, 1, 2);
+      expect(foundEvents.length, 2, reason: 'セットしたイベントが取得できません');
+    });
+  });
 }

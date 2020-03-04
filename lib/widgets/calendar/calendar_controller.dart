@@ -49,13 +49,23 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
   }
 
   set currentMonth(DateTime date) {
+    bool changed = _currentMonth.compareTo(date) != 0;
     _currentMonth = date;
+    if (changed) {
+      _onMonthChangeHandlers.forEach((OnMonthChangeHandler handler) {
+        handler(_currentMonth);
+      });
+    }
     notifyListeners();
   }
 
   set selectedDate(DateTime date) {
+    bool changed =
+        _selectedDate == null ? true : _selectedDate.compareTo(date) != 0;
     _selectedDate = date;
-    notifyDateChanged();
+    if (changed) {
+      notifyDateChanged();
+    }
     notifyListeners();
   }
 
@@ -82,7 +92,7 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
     notifyListeners();
   }
 
-  /// 指定した日にイベントを追加する
+  /// イベントの一覧を差し替える
   void setEventCollection(EventCollection collection) {
     _eventCollection = collection;
     notifyListeners();

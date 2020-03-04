@@ -1,7 +1,7 @@
 /// カレンダー上のイベント
 class CalendarEvent {
   CalendarEvent(
-      {this.name,
+      {this.name = '',
       this.startDateTime,
       this.endDateTime = null,
       this.isAllDay = false,

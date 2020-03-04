@@ -15,7 +15,7 @@ class CalendarEvent extends calendar_widget.CalendarEvent {
       String url = '',
       String description = ''})
       : super(
-            name: name = '',
+            name: name,
             startDateTime: startDateTime,
             endDateTime: endDateTime,
             isAllDay: isAllDay,

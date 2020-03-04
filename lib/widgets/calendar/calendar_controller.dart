@@ -4,6 +4,7 @@ import 'package:whimsicalendar/widgets/calendar/event_collection.dart';
 import 'calendar_event.dart';
 
 typedef OnDateChangeHandler = void Function(DateTime);
+typedef OnMonthChangeHandler = void Function(DateTime);
 
 /// カレンダーの状態を保持するオブジェクト
 class CalendarController<T extends CalendarEvent> with ChangeNotifier {
@@ -22,13 +23,17 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
   /// 日付の選択が変わった場合に呼び出される
   List<OnDateChangeHandler> _onDateChangeHandlers;
 
+  List<OnMonthChangeHandler> _onMonthChangeHandlers;
+
   CalendarController(
       {EventCollection<T> eventCollection,
-      OnDateChangeHandler onDateChangeHandler})
+      OnDateChangeHandler onDateChangeHandler,
+      OnMonthChangeHandler onMonthChangeHandler})
       : _currentMonth = null,
         _selectedDate = null,
         _eventCollection = eventCollection,
-        _onDateChangeHandlers = [] {
+        _onDateChangeHandlers = [],
+        _onMonthChangeHandlers = [] {
     if (_currentMonth == null) {
       _currentMonth = DateTime.now();
     }
@@ -38,16 +43,29 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
     if (onDateChangeHandler != null) {
       _onDateChangeHandlers.add(onDateChangeHandler);
     }
+    if (onMonthChangeHandler != null) {
+      _onMonthChangeHandlers.add(onMonthChangeHandler);
+    }
   }
 
   set currentMonth(DateTime date) {
+    bool changed = _currentMonth.compareTo(date) != 0;
     _currentMonth = date;
+    if (changed) {
+      _onMonthChangeHandlers.forEach((OnMonthChangeHandler handler) {
+        handler(_currentMonth);
+      });
+    }
     notifyListeners();
   }
 
   set selectedDate(DateTime date) {
+    bool changed =
+        _selectedDate == null ? true : _selectedDate.compareTo(date) != 0;
     _selectedDate = date;
-    notifyDateChanged();
+    if (changed) {
+      notifyDateChanged();
+    }
     notifyListeners();
   }
 
@@ -57,6 +75,9 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
   /// 次の月に変更する
   void goToNextMonth() {
     _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1, 1);
+    _onMonthChangeHandlers.forEach((OnMonthChangeHandler handler) {
+      handler(_currentMonth);
+    });
     scrollDirection = -1;
     notifyListeners();
   }
@@ -64,19 +85,22 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
   /// 前の月に変更する
   void goToPrevMonth() {
     _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1, 1);
+    _onMonthChangeHandlers.forEach((OnMonthChangeHandler handler) {
+      handler(_currentMonth);
+    });
     scrollDirection = 1;
     notifyListeners();
   }
 
-  /// 指定した日にイベントを追加する
-  void addEvent(DateTime date, T event) {
-    _eventCollection.addEvent(date, event);
+  /// イベントの一覧を差し替える
+  void setEventCollection(EventCollection collection) {
+    _eventCollection = collection;
     notifyListeners();
   }
 
   /// 指定された日のイベントの一覧を返す
   List<T> getEventsOn(DateTime date) {
-    return _eventCollection.getEventsOn(date);
+    return _eventCollection.getEventsOn(date.year, date.month, date.day);
   }
 
   /// 指定したキーが次の月を指しているかを返す

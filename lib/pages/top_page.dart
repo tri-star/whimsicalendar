@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
+import 'package:whimsicalendar/domain/calendar/calendar_event_repository_interface.dart';
 import 'package:whimsicalendar/domain/user/user.dart';
+import 'package:whimsicalendar/infrastructure/repositories/calendar_event/calendar_repository.dart';
 import 'package:whimsicalendar/widgets/calendar/calendar.dart';
 
 import 'calendar/calendar_view_model.dart';
@@ -13,7 +15,10 @@ class TopPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          Provider<CalendarViewModel>(create: (_) => CalendarViewModel())
+          Provider<CalendarEventRepositoryInterface>(
+              create: (BuildContext context) => CalendarEventRepository()),
+          Provider<CalendarViewModel>(
+              create: (BuildContext context) => CalendarViewModel(context))
         ],
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
@@ -67,6 +72,16 @@ class CalendarSectionState extends State<CalendarSection> {
         });
       });
     });
+  }
+
+  @override
+  void didUpdateWidget(CalendarSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    CalendarViewModel viewModel = Provider.of<CalendarViewModel>(context);
+    if (viewModel.shouldUpdateEventList()) {
+      viewModel.loadEventList();
+    }
   }
 
   @override

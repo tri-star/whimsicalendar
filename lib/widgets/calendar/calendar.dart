@@ -137,14 +137,26 @@ class CalendarViewState extends State<CalendarView> {
                       style: TextStyle(
                         fontSize: 10,
                       )),
-                  Text(
-                    '',
-                    style: TextStyle(
-                      fontSize: 9,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  _buildEventList(date),
                 ]))));
+  }
+
+  Widget _buildEventList(DateTime date) {
+    List<CalendarEvent> events = _controller.getEventsOn(date);
+    if (events == null || events.length == 0) {
+      return Container();
+    }
+
+    List<Widget> eventTitleList = [];
+    events.forEach((CalendarEvent e) {
+      eventTitleList.add(Container(
+          margin: EdgeInsets.only(bottom: 5),
+          color: Colors.green[200],
+          child: Text(e.name,
+              overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 9))));
+    });
+
+    return Container(child: Column(children: eventTitleList));
   }
 
   BoxDecoration _getContainerDecoration(bool isActive) {

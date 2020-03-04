@@ -152,7 +152,8 @@ class CalendarViewState extends State<CalendarView> {
       eventTitleList.add(Container(
           margin: EdgeInsets.only(bottom: 5),
           color: Colors.green[200],
-          child: Text(e.name, style: TextStyle(fontSize: 9))));
+          child: Text(e.name,
+              overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 9))));
     });
 
     return Container(child: Column(children: eventTitleList));

@@ -128,8 +128,8 @@ class CalendarViewState extends State<CalendarView> {
             },
             child: Container(
                 padding: EdgeInsets.all(5),
-                decoration:
-                    _getContainerDecoration(_controller.selectedDate == date),
+                decoration: _getContainerDecoration(
+                    _controller.selectedDate == date, date.weekday),
                 height: 80,
                 alignment: Alignment.centerLeft,
                 child: Column(children: [
@@ -159,13 +159,19 @@ class CalendarViewState extends State<CalendarView> {
     return Container(child: Column(children: eventTitleList));
   }
 
-  BoxDecoration _getContainerDecoration(bool isActive) {
-    if (isActive) {
-      return BoxDecoration(
-        color: Color.fromARGB(20, 0, 0, 0),
-      );
+  BoxDecoration _getContainerDecoration(bool isActive, int weekday) {
+    Color backgroundColor = Colors.white;
+    if (weekday == 6) {
+      backgroundColor = Colors.blue[100];
+    } else if (weekday == 7) {
+      backgroundColor = Colors.red[100];
     }
-    return BoxDecoration();
+
+    if (isActive) {
+      backgroundColor =
+          Color.alphaBlend(Color.fromARGB(30, 0, 0, 0), backgroundColor);
+    }
+    return BoxDecoration(color: backgroundColor);
   }
 
   /// 横方向のスワイプが行われた場合の処理
@@ -196,9 +202,17 @@ class _CalendarWeekdayCell extends StatelessWidget {
       7: '土',
     };
 
+    Color dayColor = Colors.white;
+    if (this.weekday == 7) {
+      dayColor = Colors.blue[100];
+    } else if (this.weekday == 1) {
+      dayColor = Colors.red[100];
+    }
+
     return Container(
         height: 25,
         alignment: Alignment.center,
+        decoration: BoxDecoration(color: dayColor),
         child: Text(
           weekdayMap[weekday],
           style: TextStyle(fontSize: 10),

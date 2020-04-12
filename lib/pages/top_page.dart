@@ -1,12 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
-import 'package:whimsicalendar/domain/calendar/calendar_event_repository_interface.dart';
 import 'package:whimsicalendar/domain/url_sharing/url_sharing_handler_inteface.dart';
 import 'package:whimsicalendar/domain/user/user.dart';
-import 'package:whimsicalendar/infrastructure/repositories/calendar_event/calendar_repository.dart';
 import 'package:whimsicalendar/widgets/calendar/calendar.dart';
 
 import 'calendar/calendar_view_model.dart';
@@ -18,8 +14,6 @@ class TopPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          Provider<CalendarEventRepositoryInterface>(
-              create: (BuildContext context) => CalendarEventRepository()),
           Provider<CalendarViewModel>(
               create: (BuildContext context) => CalendarViewModel(context)),
         ],
@@ -55,7 +49,6 @@ class CalendarSection extends StatefulWidget {
 
 class CalendarSectionState extends State<CalendarSection> {
   User _user;
-  StreamSubscription _intentDataStreamSubscription;
 
   @override
   void initState() {
@@ -112,6 +105,5 @@ class CalendarSectionState extends State<CalendarSection> {
   @override
   dispose() {
     super.dispose();
-    _intentDataStreamSubscription.cancel();
   }
 }

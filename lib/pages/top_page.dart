@@ -111,6 +111,7 @@ class CalendarSectionState extends State<CalendarSection> {
 
   @override
   dispose() {
+    super.dispose();
     _intentDataStreamSubscription.cancel();
   }
 }

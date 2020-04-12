@@ -20,6 +20,12 @@ class UrlSharingHandler extends UrlSharingHandlerInterface {
     });
   }
 
+  /// 起動時に受け取ったURLのインテントの内容を返す。
+  /// 空の場合はnullを返す
+  Future<String> getInitialUrlIntent() async {
+    return await ReceiveSharingIntent.getInitialText();
+  }
+
   @mustCallSuper
   void dispose() {
     _subscription.cancel();

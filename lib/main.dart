@@ -6,6 +6,7 @@ import 'package:whimsicalendar/infrastructure/auth/google_authenticator.dart';
 import 'package:whimsicalendar/infrastructure/firebase/firebase_app.dart';
 import 'package:whimsicalendar/routes.dart';
 
+import 'domain/url_sharing/url_sharing_handler_inteface.dart';
 import 'infrastructure/url_sharing/url_sharing_handler.dart';
 import 'pages/top_page.dart';
 
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
       ),
       home: MultiProvider(providers: [
         Provider<AuthenticatorInterface>(create: (_) => GoogleAuthenticator()),
-        Provider<UrlSharingHandler>(
+        Provider<UrlSharingHandlerInterface>(
             create: (BuildContext context) => UrlSharingHandler())
       ], child: TopPage()),
       routes: RouteRegistrar().getDefinitions(),

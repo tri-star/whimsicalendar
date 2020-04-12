@@ -2,12 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/domain/calendar/calendar_event_repository_interface.dart';
+import 'package:whimsicalendar/domain/url_sharing/url_sharing_handler_inteface.dart';
 import 'package:whimsicalendar/domain/user/user.dart';
 import 'package:whimsicalendar/infrastructure/repositories/calendar_event/calendar_repository.dart';
-import 'package:whimsicalendar/infrastructure/url_sharing/url_sharing_handler.dart';
 import 'package:whimsicalendar/widgets/calendar/calendar.dart';
 
 import 'calendar/calendar_view_model.dart';
@@ -74,20 +73,21 @@ class CalendarSectionState extends State<CalendarSection> {
       _user = await authenticator.getUser();
 
       //アプリケーションの起動中にURLのインテントを受け取った場合
-      Provider.of<UrlSharingHandler>(context, listen: false)
+      Provider.of<UrlSharingHandlerInterface>(context, listen: false)
           .subscribe((String sharedUrl) async {
         await Navigator.of(context).pushNamed('/event/add',
             arguments: EventRegisterPageArguments(url: sharedUrl));
       });
 
       //URLのインテントを受け取って起動した場合
-      ReceiveSharingIntent.getInitialText().then((String text) async {
-        if (text == null) {
-          return;
-        }
+      String sharedUrl =
+          await Provider.of<UrlSharingHandlerInterface>(context, listen: false)
+              .getInitialUrlIntent();
+      if (sharedUrl != null) {
+        print(sharedUrl);
         await Navigator.of(context).pushNamed('/event/add',
-            arguments: EventRegisterPageArguments(url: text));
-      });
+            arguments: EventRegisterPageArguments(url: sharedUrl));
+      }
     });
   }
 

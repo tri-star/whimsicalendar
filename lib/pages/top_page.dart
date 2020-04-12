@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/domain/calendar/calendar_event_repository_interface.dart';
 import 'package:whimsicalendar/domain/user/user.dart';
@@ -52,6 +55,7 @@ class CalendarSection extends StatefulWidget {
 
 class CalendarSectionState extends State<CalendarSection> {
   User _user;
+  StreamSubscription _intentDataStreamSubscription;
 
   @override
   void initState() {
@@ -66,10 +70,23 @@ class CalendarSectionState extends State<CalendarSection> {
         return;
       }
 
-      authenticator.getUser().then((user) {
-        setState(() {
-          _user = user;
-        });
+      _user = await authenticator.getUser();
+
+      _intentDataStreamSubscription =
+          ReceiveSharingIntent.getTextStream().listen((String text) async {
+        if (text == null) {
+          return;
+        }
+        await Navigator.of(context).pushNamed('/event/add',
+            arguments: EventRegisterPageArguments(url: text));
+      });
+
+      ReceiveSharingIntent.getInitialText().then((String text) async {
+        if (text == null) {
+          return;
+        }
+        await Navigator.of(context).pushNamed('/event/add',
+            arguments: EventRegisterPageArguments(url: text));
       });
     });
   }
@@ -90,5 +107,10 @@ class CalendarSectionState extends State<CalendarSection> {
         child: CalendarView(
             controller: Provider.of<CalendarViewModel>(context, listen: false)
                 .calendarController));
+  }
+
+  @override
+  dispose() {
+    _intentDataStreamSubscription.cancel();
   }
 }

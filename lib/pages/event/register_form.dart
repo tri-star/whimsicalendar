@@ -15,8 +15,9 @@ import 'register_form_view_model.dart';
 /// イベント登録画面に渡すパラメータ
 class EventRegisterPageArguments {
   DateTime currentDate;
+  String url;
 
-  EventRegisterPageArguments({this.currentDate});
+  EventRegisterPageArguments({this.currentDate, this.url = ''});
 }
 
 /// イベント登録画面
@@ -28,14 +29,17 @@ class EventRegisterPage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(title: Text('イベント登録')),
-        body: EventRegisterForm(arguments.currentDate));
+        body: EventRegisterForm(arguments));
   }
 }
 
 class EventRegisterForm extends StatefulWidget {
-  DateTime currentDate;
+  final DateTime currentDate;
+  final String sharedUrl;
 
-  EventRegisterForm(this.currentDate);
+  EventRegisterForm(EventRegisterPageArguments arguments)
+      : currentDate = arguments.currentDate,
+        sharedUrl = arguments.url;
 
   @override
   State<StatefulWidget> createState() => EventRegisterFormState();
@@ -63,8 +67,8 @@ class EventRegisterFormState extends State<EventRegisterForm> {
             return CalendarEventRegisterUseCase(CalendarEventRepository());
           }),
           ChangeNotifierProvider<RegisterFormViewModel>(
-              create: (context) =>
-                  RegisterFormViewModel(context, widget.currentDate)),
+              create: (context) => RegisterFormViewModel(
+                  context, widget.currentDate, widget.sharedUrl)),
         ],
         child: Padding(
             padding: EdgeInsets.all(10),

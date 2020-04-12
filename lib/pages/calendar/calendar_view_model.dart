@@ -8,7 +8,7 @@ import 'package:whimsicalendar/widgets/calendar/calendar_controller.dart';
 import 'package:whimsicalendar/widgets/calendar/event_collection.dart';
 
 /// カレンダー全体に対するViewModel
-class CalendarViewModel {
+class CalendarViewModel with ChangeNotifier {
   CalendarController calendarController;
 
   DateTime currentDate;
@@ -56,5 +56,6 @@ class CalendarViewModel {
 
     calendarController.setEventCollection(collection);
     _loadedMonth = calendarController.currentMonth;
+    notifyListeners();
   }
 }

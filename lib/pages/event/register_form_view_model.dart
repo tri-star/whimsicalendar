@@ -14,13 +14,13 @@ class RegisterFormViewModel with ChangeNotifier {
   TextEditingController nameController;
   TextEditingController urlController;
 
-  RegisterFormViewModel(BuildContext context, DateTime currentDate)
+  RegisterFormViewModel(BuildContext context, DateTime currentDate, String url)
       : _event = CalendarEvent() {
     _context = context;
     _event.startDateTime = currentDate;
     formKey = GlobalKey<FormState>();
     nameController = TextEditingController();
-    urlController = TextEditingController();
+    urlController = TextEditingController(text: url);
   }
 
   String get name => _event.name;

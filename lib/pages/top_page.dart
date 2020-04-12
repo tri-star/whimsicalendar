@@ -7,6 +7,7 @@ import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/domain/calendar/calendar_event_repository_interface.dart';
 import 'package:whimsicalendar/domain/user/user.dart';
 import 'package:whimsicalendar/infrastructure/repositories/calendar_event/calendar_repository.dart';
+import 'package:whimsicalendar/infrastructure/url_sharing/url_sharing_handler.dart';
 import 'package:whimsicalendar/widgets/calendar/calendar.dart';
 
 import 'calendar/calendar_view_model.dart';
@@ -21,7 +22,7 @@ class TopPage extends StatelessWidget {
           Provider<CalendarEventRepositoryInterface>(
               create: (BuildContext context) => CalendarEventRepository()),
           Provider<CalendarViewModel>(
-              create: (BuildContext context) => CalendarViewModel(context))
+              create: (BuildContext context) => CalendarViewModel(context)),
         ],
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
@@ -72,15 +73,14 @@ class CalendarSectionState extends State<CalendarSection> {
 
       _user = await authenticator.getUser();
 
-      _intentDataStreamSubscription =
-          ReceiveSharingIntent.getTextStream().listen((String text) async {
-        if (text == null) {
-          return;
-        }
+      //アプリケーションの起動中にURLのインテントを受け取った場合
+      Provider.of<UrlSharingHandler>(context, listen: false)
+          .subscribe((String sharedUrl) async {
         await Navigator.of(context).pushNamed('/event/add',
-            arguments: EventRegisterPageArguments(url: text));
+            arguments: EventRegisterPageArguments(url: sharedUrl));
       });
 
+      //URLのインテントを受け取って起動した場合
       ReceiveSharingIntent.getInitialText().then((String text) async {
         if (text == null) {
           return;

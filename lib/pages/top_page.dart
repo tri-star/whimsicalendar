@@ -14,7 +14,7 @@ class TopPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          Provider<CalendarViewModel>(
+          ChangeNotifierProvider<CalendarViewModel>(
               create: (BuildContext context) => CalendarViewModel(context)),
         ],
         child: Builder(builder: (BuildContext context) {
@@ -38,6 +38,9 @@ class TopPage extends StatelessWidget {
 
     if (registered == true) {
       Scaffold.of(context).showSnackBar(SnackBar(content: Text('登録しました。')));
+      CalendarViewModel viewModel =
+          Provider.of<CalendarViewModel>(context, listen: false);
+      viewModel.loadEventList();
     }
   }
 }
@@ -81,6 +84,10 @@ class CalendarSectionState extends State<CalendarSection> {
         await Navigator.of(context).pushNamed('/event/add',
             arguments: EventRegisterPageArguments(url: sharedUrl));
       }
+
+      CalendarViewModel viewModel =
+          Provider.of<CalendarViewModel>(context, listen: false);
+      viewModel.loadEventList();
     });
   }
 

@@ -19,17 +19,43 @@ class SignInPage extends StatelessWidget {
 class SignInPageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      RaisedButton(
-          onPressed: () async {
-            if (!await Provider.of<AuthenticatorInterface>(context,
-                    listen: false)
-                .signIn()) {
-              print('ログイン失敗');
-            }
-            Navigator.of(context).pushReplacementNamed('/');
-          },
-          child: Text('Googleでサインイン'))
-    ]);
+    return Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                stops: [
+              0.0,
+              0.5,
+              1.0
+            ],
+                colors: [
+              const Color(0xffe8f6fc),
+              const Color(0xffbfe8f9),
+              const Color(0xff98fde5),
+            ])),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text('Whisimicalendar',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 40,
+                    decoration: TextDecoration.underline)),
+            SizedBox(height: 20),
+            RaisedButton(
+                color: Colors.white,
+                shape: StadiumBorder(side: BorderSide(color: Colors.grey)),
+                onPressed: () async {
+                  if (!await Provider.of<AuthenticatorInterface>(context,
+                          listen: false)
+                      .signIn()) {
+                    print('ログイン失敗');
+                  }
+                  Navigator.of(context).pushReplacementNamed('/');
+                },
+                child: Text('Googleでサインイン')),
+            SizedBox(height: 100), //余白の調整用
+          ])
+        ]));
   }
 }

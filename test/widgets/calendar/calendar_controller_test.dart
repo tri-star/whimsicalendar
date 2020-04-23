@@ -195,4 +195,20 @@ void main() {
       expect(controller.isPrevMonthKey(key), false);
     });
   });
+
+  group('onDateLongTapped', () {
+    test('フックを設定している場合、呼び出せること', () {
+      DateTime currentDate = DateTime(2000, 1, 1);
+      DateTime passedDateTime;
+      CalendarController controller =
+          CalendarController(onDateLongTapHandler: (DateTime dateTime) {
+        passedDateTime = dateTime;
+      });
+
+      controller.selectedDate = currentDate;
+      controller.onDateLongTapped();
+
+      expect(passedDateTime, currentDate);
+    });
+  });
 }

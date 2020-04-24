@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
@@ -18,10 +19,13 @@ class CalendarViewModel with ChangeNotifier {
 
   BuildContext _context;
 
+  EventCollection<CalendarEvent> _eventCollection;
+
   CalendarViewModel(BuildContext context) {
     calendarController = CalendarController(
         onDateChangeHandler: onDateChanged,
-        onMonthChangeHandler: onMonthChanged);
+        onMonthChangeHandler: onMonthChanged,
+        onDateLongTapHandler: onDateLongTapped);
     _context = context;
     currentDate = null;
     _loadedMonth = null;
@@ -34,6 +38,30 @@ class CalendarViewModel with ChangeNotifier {
   /// 表示している月が変わった時のコールバック
   void onMonthChanged(DateTime newMonth) {
     loadEventList();
+  }
+
+  /// 日付をロングタップした場合の処理
+  void onDateLongTapped(DateTime dateTime) async {
+    if (_eventCollection == null) {
+      return;
+    }
+
+    List<CalendarEvent> events = _eventCollection.getEventsByDate(dateTime);
+    if (events.length == 0) {
+      return;
+    }
+
+    await showDialog<void>(
+        context: _context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: const Text('予定一覧'),
+            children: [
+              for (var event in events)
+                Column(children: [ListTile(title: Text(event.name))])
+            ],
+          );
+        });
   }
 
   /// イベント一覧の再ロードが必要かを返す
@@ -50,11 +78,10 @@ class CalendarViewModel with ChangeNotifier {
         Provider.of<AuthenticatorInterface>(_context, listen: false);
     User user = await authenticator.getUser();
 
-    EventCollection<CalendarEvent> collection =
-        await repository.getCalendarEventByMonth(
-            user.id, currentMonth.year, currentMonth.month);
+    _eventCollection = await repository.getCalendarEventByMonth(
+        user.id, currentMonth.year, currentMonth.month);
 
-    calendarController.setEventCollection(collection);
+    calendarController.setEventCollection(_eventCollection);
     _loadedMonth = calendarController.currentMonth;
     notifyListeners();
   }

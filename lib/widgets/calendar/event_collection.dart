@@ -37,6 +37,10 @@ class EventCollection<T extends CalendarEvent> {
     return _cache[cacheKey];
   }
 
+  List<T> getEventsByDate(DateTime dateTime) {
+    return getEventsOn(dateTime.year, dateTime.month, dateTime.day);
+  }
+
   /// イベントを追加する
   void add(T event) {
     String cacheKey = _getKey(event.startDateTime.year,

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/domain/calendar/calendar_event.dart';
 import 'package:whimsicalendar/domain/calendar/calendar_event_repository_interface.dart';
 import 'package:whimsicalendar/domain/user/user.dart';
 import 'package:whimsicalendar/widgets/calendar/calendar_controller.dart';
 import 'package:whimsicalendar/widgets/calendar/event_collection.dart';
+
+typedef OnDateLongTappedFunction = void Function(
+    DateTime dateTime, List<CalendarEvent> events);
 
 /// カレンダー全体に対するViewModel
 class CalendarViewModel with ChangeNotifier {
@@ -17,18 +19,29 @@ class CalendarViewModel with ChangeNotifier {
   /// 現在イベント一覧をロードしている月
   DateTime _loadedMonth;
 
-  BuildContext _context;
+  AuthenticatorInterface _authenticator;
+  CalendarEventRepositoryInterface _calendarEventRepository;
 
   EventCollection<CalendarEvent> _eventCollection;
 
-  CalendarViewModel(BuildContext context) {
+  OnDateLongTappedFunction _onDateLongTapped;
+
+  CalendarViewModel(
+      {AuthenticatorInterface authenticator,
+      CalendarEventRepositoryInterface calendarEventRepository}) {
+    _authenticator = authenticator;
+    _calendarEventRepository = calendarEventRepository;
     calendarController = CalendarController(
         onDateChangeHandler: onDateChanged,
         onMonthChangeHandler: onMonthChanged,
         onDateLongTapHandler: onDateLongTapped);
-    _context = context;
     currentDate = null;
     _loadedMonth = null;
+    _onDateLongTapped = null;
+  }
+
+  void init({OnDateLongTappedFunction onDateLongTapped}) {
+    _onDateLongTapped = onDateLongTapped;
   }
 
   void onDateChanged(DateTime newDate) {
@@ -51,17 +64,7 @@ class CalendarViewModel with ChangeNotifier {
       return;
     }
 
-    await showDialog<void>(
-        context: _context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: const Text('予定一覧'),
-            children: [
-              for (var event in events)
-                Column(children: [ListTile(title: Text(event.name))])
-            ],
-          );
-        });
+    _onDateLongTapped?.call(dateTime, events);
   }
 
   /// イベント一覧の再ロードが必要かを返す
@@ -72,13 +75,9 @@ class CalendarViewModel with ChangeNotifier {
   /// イベント一覧を再ロードする
   void loadEventList() async {
     DateTime currentMonth = calendarController.currentMonth;
-    CalendarEventRepositoryInterface repository =
-        Provider.of<CalendarEventRepositoryInterface>(_context, listen: false);
-    AuthenticatorInterface authenticator =
-        Provider.of<AuthenticatorInterface>(_context, listen: false);
-    User user = await authenticator.getUser();
+    User user = await _authenticator.getUser();
 
-    _eventCollection = await repository.getCalendarEventByMonth(
+    _eventCollection = await _calendarEventRepository.getCalendarEventByMonth(
         user.id, currentMonth.year, currentMonth.month);
 
     calendarController.setEventCollection(_eventCollection);

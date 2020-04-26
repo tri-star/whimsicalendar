@@ -53,6 +53,13 @@ class CalendarViewModel with ChangeNotifier {
     loadEventList();
   }
 
+  /// 現在の月を指定した月に変更する
+  void setCurrentMonth(DateTime dateTime) {
+    //変更を検知するとController側からonMonthChangedが呼び出される。
+    calendarController.currentMonth =
+        DateTime(dateTime.year, dateTime.month, 1);
+  }
+
   /// 日付をロングタップした場合の処理
   void onDateLongTapped(DateTime dateTime) async {
     if (_eventCollection == null) {
@@ -73,7 +80,7 @@ class CalendarViewModel with ChangeNotifier {
   }
 
   /// イベント一覧を再ロードする
-  void loadEventList() async {
+  Future<void> loadEventList() async {
     DateTime currentMonth = calendarController.currentMonth;
     User user = await _authenticator.getUser();
 

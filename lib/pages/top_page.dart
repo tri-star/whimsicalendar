@@ -5,6 +5,7 @@ import 'package:whimsicalendar/domain/calendar/calendar_event.dart';
 import 'package:whimsicalendar/domain/calendar/calendar_event_repository_interface.dart';
 import 'package:whimsicalendar/domain/url_sharing/url_sharing_handler_inteface.dart';
 import 'package:whimsicalendar/domain/user/user.dart';
+import 'package:whimsicalendar/pages/event/edit_form.dart';
 import 'package:whimsicalendar/widgets/calendar/calendar.dart';
 
 import 'calendar/calendar_view_model.dart';
@@ -108,10 +109,21 @@ class CalendarSectionState extends State<CalendarSection> {
             title: const Text('予定一覧'),
             children: [
               for (var event in events)
-                Column(children: [ListTile(title: Text(event.name))])
+                GestureDetector(
+                    onTap: () async {
+                      await onTapEvent(context, event);
+                      Navigator.pop(context, true);
+                    },
+                    child:
+                        Column(children: [ListTile(title: Text(event.name))]))
             ],
           );
         });
+  }
+
+  void onTapEvent(BuildContext context, CalendarEvent event) async {
+    var arguments = EventEditPageArguments(event: event);
+    await Navigator.pushNamed(context, '/event/edit', arguments: arguments);
   }
 
   @override

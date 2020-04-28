@@ -101,7 +101,7 @@ class EventRegisterFormState extends State<EventRegisterForm> {
                         padding: EdgeInsets.only(top: 20),
                         child: TextFormField(
                             controller: viewModel.urlController,
-                            onChanged: (newValue) => {},
+                            onChanged: (newValue) => viewModel.url = newValue,
                             decoration: InputDecoration(labelText: 'URL'))),
                     Expanded(
                       child: _buildSubmitButtonSection(context, viewModel),

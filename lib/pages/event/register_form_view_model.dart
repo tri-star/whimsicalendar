@@ -29,6 +29,12 @@ class RegisterFormViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  String get url => _event.url;
+  set url(String newUrl) {
+    _event.url = newUrl;
+    notifyListeners();
+  }
+
   bool get isAllDay => _event.isAllDay;
   set isAllDay(bool value) {
     _event.isAllDay = value;

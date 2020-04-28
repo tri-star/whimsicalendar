@@ -39,6 +39,7 @@ class CalendarEventRepository implements CalendarEventRepositoryInterface {
           name: item['name'],
           startDateTime: _parseTimeStamp(item['startDateTime']),
           endDateTime: _parseTimeStamp(item['endDateTime']),
+          url: item['url'],
           isAllDay: item['isAllDay']));
     });
 

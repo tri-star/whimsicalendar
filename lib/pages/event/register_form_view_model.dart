@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/domain/calendar/calendar_event.dart';
-import 'package:whimsicalendar/usecases/calendar_event/calendar_event_register_use_case.dart';
+import 'package:whimsicalendar/usecases/calendar_event/calendar_event_save_use_case.dart';
 
 class RegisterFormViewModel with ChangeNotifier {
   BuildContext _context;
@@ -140,8 +140,8 @@ class RegisterFormViewModel with ChangeNotifier {
   Future<bool> registerEvent() async {
     AuthenticatorInterface authenticator =
         Provider.of<AuthenticatorInterface>(_context, listen: false);
-    CalendarEventRegisterUseCase useCase =
-        Provider.of<CalendarEventRegisterUseCase>(_context, listen: false);
+    CalendarEventSaveUseCase useCase =
+        Provider.of<CalendarEventSaveUseCase>(_context, listen: false);
 
     try {
       if (!formKey.currentState.validate()) {

@@ -5,6 +5,7 @@ import 'calendar_event.dart';
 
 typedef OnDateChangeHandler = void Function(DateTime);
 typedef OnMonthChangeHandler = void Function(DateTime);
+typedef OnDateLongTapHandler = void Function(DateTime);
 
 /// カレンダーの状態を保持するオブジェクト
 class CalendarController<T extends CalendarEvent> with ChangeNotifier {
@@ -25,15 +26,20 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
 
   List<OnMonthChangeHandler> _onMonthChangeHandlers;
 
+  /// 日をロングタップした時に呼び出される
+  List<OnDateLongTapHandler> _onDateLongTapHandlers;
+
   CalendarController(
       {EventCollection<T> eventCollection,
       OnDateChangeHandler onDateChangeHandler,
-      OnMonthChangeHandler onMonthChangeHandler})
+      OnMonthChangeHandler onMonthChangeHandler,
+      OnDateLongTapHandler onDateLongTapHandler})
       : _currentMonth = null,
         _selectedDate = null,
         _eventCollection = eventCollection,
         _onDateChangeHandlers = [],
-        _onMonthChangeHandlers = [] {
+        _onMonthChangeHandlers = [],
+        _onDateLongTapHandlers = [] {
     if (_currentMonth == null) {
       _currentMonth = DateTime.now();
     }
@@ -45,6 +51,9 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
     }
     if (onMonthChangeHandler != null) {
       _onMonthChangeHandlers.add(onMonthChangeHandler);
+    }
+    if (onDateLongTapHandler != null) {
+      _onDateLongTapHandlers.add(onDateLongTapHandler);
     }
   }
 
@@ -90,6 +99,13 @@ class CalendarController<T extends CalendarEvent> with ChangeNotifier {
     });
     scrollDirection = 1;
     notifyListeners();
+  }
+
+  /// 日をロングタップされた時の処理
+  void onDateLongTapped() {
+    _onDateLongTapHandlers.forEach((OnDateLongTapHandler handler) {
+      handler(_selectedDate);
+    });
   }
 
   /// イベントの一覧を差し替える

@@ -126,6 +126,9 @@ class CalendarViewState extends State<CalendarView> {
             onTapDown: (_) {
               _controller.selectedDate = date;
             },
+            onLongPressStart: (_) {
+              _controller.onDateLongTapped();
+            },
             child: Container(
                 padding: EdgeInsets.all(5),
                 decoration: _getContainerDecoration(

@@ -14,6 +14,11 @@ class EventCollection<T extends CalendarEvent> {
       : _events = events,
         _cache = {};
 
+  /// イベントの件数を返す
+  int get length {
+    return _events.length;
+  }
+
   /// 指定された日のイベントの一覧を返す
   List<T> getEventsOn(int year, int month, int day) {
     String cacheKey = _getKey(year, month, day);
@@ -35,6 +40,10 @@ class EventCollection<T extends CalendarEvent> {
     });
 
     return _cache[cacheKey];
+  }
+
+  List<T> getEventsByDate(DateTime dateTime) {
+    return getEventsOn(dateTime.year, dateTime.month, dateTime.day);
   }
 
   /// イベントを追加する

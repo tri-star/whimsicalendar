@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/infrastructure/auth/google_authenticator.dart';
 import 'package:whimsicalendar/infrastructure/repositories/calendar_event/calendar_repository.dart';
-import 'package:whimsicalendar/usecases/calendar_event/calendar_event_register_use_case.dart';
+import 'package:whimsicalendar/usecases/calendar_event/calendar_event_save_use_case.dart';
 import 'package:whimsicalendar/widgets/date_time_input/date_input.dart';
 import 'package:whimsicalendar/widgets/date_time_input/date_time_input.dart';
 import 'package:whimsicalendar/widgets/labeled_checkbox.dart';
@@ -62,9 +62,8 @@ class EventRegisterFormState extends State<EventRegisterForm> {
         providers: [
           Provider<AuthenticatorInterface>(
               create: (_) => GoogleAuthenticator()),
-          Provider<CalendarEventRegisterUseCase>(
-              create: (BuildContext context) {
-            return CalendarEventRegisterUseCase(CalendarEventRepository());
+          Provider<CalendarEventSaveUseCase>(create: (BuildContext context) {
+            return CalendarEventSaveUseCase(CalendarEventRepository());
           }),
           ChangeNotifierProvider<RegisterFormViewModel>(
               create: (context) => RegisterFormViewModel(
@@ -101,7 +100,7 @@ class EventRegisterFormState extends State<EventRegisterForm> {
                         padding: EdgeInsets.only(top: 20),
                         child: TextFormField(
                             controller: viewModel.urlController,
-                            onChanged: (newValue) => {},
+                            onChanged: (newValue) => viewModel.url = newValue,
                             decoration: InputDecoration(labelText: 'URL'))),
                     Expanded(
                       child: _buildSubmitButtonSection(context, viewModel),

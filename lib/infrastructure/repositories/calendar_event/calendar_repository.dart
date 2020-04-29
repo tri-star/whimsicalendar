@@ -7,9 +7,24 @@ import 'package:whimsicalendar/widgets/calendar/event_collection.dart';
 /// イベントのリポジトリ
 class CalendarEventRepository implements CalendarEventRepositoryInterface {
   @override
-  void save(User user, CalendarEvent event) {
+  Future<void> save(User user, CalendarEvent event) async {
     if (event.id == null) {
-      Firestore.instance.collection('calendar_events/${user.id}/events').add({
+      await Firestore.instance
+          .collection('calendar_events/${user.id}/events')
+          .add({
+        'name': event.name,
+        'startDateTime': event.startDateTime,
+        'endDateTime': event.endDateTime,
+        'isAllDay': event.isAllDay,
+        'url': event.url,
+        'description': event.description
+      });
+    } else {
+      var docRef = Firestore.instance
+          .collection('calendar_events/${user.id}/events')
+          .document(event.id);
+
+      await docRef.updateData({
         'name': event.name,
         'startDateTime': event.startDateTime,
         'endDateTime': event.endDateTime,
@@ -39,6 +54,7 @@ class CalendarEventRepository implements CalendarEventRepositoryInterface {
           name: item['name'],
           startDateTime: _parseTimeStamp(item['startDateTime']),
           endDateTime: _parseTimeStamp(item['endDateTime']),
+          url: item['url'],
           isAllDay: item['isAllDay']));
     });
 

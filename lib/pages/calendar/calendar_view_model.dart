@@ -1,11 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/domain/calendar/calendar_event.dart';
 import 'package:whimsicalendar/domain/calendar/calendar_event_repository_interface.dart';
 import 'package:whimsicalendar/domain/user/user.dart';
 import 'package:whimsicalendar/widgets/calendar/calendar_controller.dart';
 import 'package:whimsicalendar/widgets/calendar/event_collection.dart';
+
+typedef OnDateLongTappedFunction = void Function(
+    DateTime dateTime, List<CalendarEvent> events);
 
 /// カレンダー全体に対するViewModel
 class CalendarViewModel with ChangeNotifier {
@@ -16,15 +19,29 @@ class CalendarViewModel with ChangeNotifier {
   /// 現在イベント一覧をロードしている月
   DateTime _loadedMonth;
 
-  BuildContext _context;
+  AuthenticatorInterface _authenticator;
+  CalendarEventRepositoryInterface _calendarEventRepository;
 
-  CalendarViewModel(BuildContext context) {
+  EventCollection<CalendarEvent> _eventCollection;
+
+  OnDateLongTappedFunction _onDateLongTapped;
+
+  CalendarViewModel(
+      {AuthenticatorInterface authenticator,
+      CalendarEventRepositoryInterface calendarEventRepository}) {
+    _authenticator = authenticator;
+    _calendarEventRepository = calendarEventRepository;
     calendarController = CalendarController(
         onDateChangeHandler: onDateChanged,
-        onMonthChangeHandler: onMonthChanged);
-    _context = context;
+        onMonthChangeHandler: onMonthChanged,
+        onDateLongTapHandler: onDateLongTapped);
     currentDate = null;
     _loadedMonth = null;
+    _onDateLongTapped = null;
+  }
+
+  void init({OnDateLongTappedFunction onDateLongTapped}) {
+    _onDateLongTapped = onDateLongTapped;
   }
 
   void onDateChanged(DateTime newDate) {
@@ -36,25 +53,41 @@ class CalendarViewModel with ChangeNotifier {
     loadEventList();
   }
 
+  /// 現在の月を指定した月に変更する
+  void setCurrentMonth(DateTime dateTime) {
+    //変更を検知するとController側からonMonthChangedが呼び出される。
+    calendarController.currentMonth =
+        DateTime(dateTime.year, dateTime.month, 1);
+  }
+
+  /// 日付をロングタップした場合の処理
+  void onDateLongTapped(DateTime dateTime) async {
+    if (_eventCollection == null) {
+      return;
+    }
+
+    List<CalendarEvent> events = _eventCollection.getEventsByDate(dateTime);
+    if (events.length == 0) {
+      return;
+    }
+
+    _onDateLongTapped?.call(dateTime, events);
+  }
+
   /// イベント一覧の再ロードが必要かを返す
   bool shouldUpdateEventList() {
     return _loadedMonth != calendarController.currentMonth;
   }
 
   /// イベント一覧を再ロードする
-  void loadEventList() async {
+  Future<void> loadEventList() async {
     DateTime currentMonth = calendarController.currentMonth;
-    CalendarEventRepositoryInterface repository =
-        Provider.of<CalendarEventRepositoryInterface>(_context, listen: false);
-    AuthenticatorInterface authenticator =
-        Provider.of<AuthenticatorInterface>(_context, listen: false);
-    User user = await authenticator.getUser();
+    User user = await _authenticator.getUser();
 
-    EventCollection<CalendarEvent> collection =
-        await repository.getCalendarEventByMonth(
-            user.id, currentMonth.year, currentMonth.month);
+    _eventCollection = await _calendarEventRepository.getCalendarEventByMonth(
+        user.id, currentMonth.year, currentMonth.month);
 
-    calendarController.setEventCollection(collection);
+    calendarController.setEventCollection(_eventCollection);
     _loadedMonth = calendarController.currentMonth;
     notifyListeners();
   }

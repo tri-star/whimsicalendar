@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
+import 'package:whimsicalendar/domain/calendar/calendar_event.dart';
+import 'package:whimsicalendar/domain/calendar/calendar_event_repository_interface.dart';
 import 'package:whimsicalendar/domain/url_sharing/url_sharing_handler_inteface.dart';
 import 'package:whimsicalendar/domain/user/user.dart';
+import 'package:whimsicalendar/pages/event/edit_form.dart';
 import 'package:whimsicalendar/widgets/calendar/calendar.dart';
 
 import 'calendar/calendar_view_model.dart';
@@ -15,7 +18,12 @@ class TopPage extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<CalendarViewModel>(
-              create: (BuildContext context) => CalendarViewModel(context)),
+              create: (BuildContext context) => CalendarViewModel(
+                  authenticator: Provider.of<AuthenticatorInterface>(context,
+                      listen: false),
+                  calendarEventRepository:
+                      Provider.of<CalendarEventRepositoryInterface>(context,
+                          listen: false))),
         ],
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
@@ -87,8 +95,35 @@ class CalendarSectionState extends State<CalendarSection> {
 
       CalendarViewModel viewModel =
           Provider.of<CalendarViewModel>(context, listen: false);
-      viewModel.loadEventList();
+      viewModel
+        ..init(onDateLongTapped: onDateLongTapped)
+        ..loadEventList();
     });
+  }
+
+  void onDateLongTapped(DateTime dateTime, List<CalendarEvent> events) async {
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: const Text('予定一覧'),
+            children: [
+              for (var event in events)
+                GestureDetector(
+                    onTap: () async {
+                      await onTapEvent(context, event);
+                      Navigator.pop(context, true);
+                    },
+                    child:
+                        Column(children: [ListTile(title: Text(event.name))]))
+            ],
+          );
+        });
+  }
+
+  void onTapEvent(BuildContext context, CalendarEvent event) async {
+    var arguments = EventEditPageArguments(event: event);
+    await Navigator.pushNamed(context, '/event/edit', arguments: arguments);
   }
 
   @override

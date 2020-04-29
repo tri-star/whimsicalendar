@@ -7,7 +7,7 @@ import 'package:whimsicalendar/domain/calendar/calendar_event_repository_interfa
 import 'package:whimsicalendar/domain/url_sharing/url_sharing_handler_inteface.dart';
 import 'package:whimsicalendar/domain/user/user.dart';
 import 'package:whimsicalendar/infrastructure/auth/stub_authenticator.dart';
-import 'package:whimsicalendar/infrastructure/repositories/calendar_event/stub_calendar_repository.dart';
+import 'package:whimsicalendar/infrastructure/repositories/calendar_event/stub_calendar_event_repository.dart';
 import 'package:whimsicalendar/infrastructure/url_sharing/stub_url_sharing_handler.dart';
 import 'package:whimsicalendar/pages/top_page.dart';
 import 'package:whimsicalendar/routes.dart';

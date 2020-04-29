@@ -1,26 +1,32 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/domain/calendar/calendar_event.dart';
 import 'package:whimsicalendar/usecases/calendar_event/calendar_event_save_use_case.dart';
 
-class RegisterFormViewModel with ChangeNotifier {
-  BuildContext _context;
+/// イベント編集画面のViewModel
+class EditFormViewModel with ChangeNotifier {
   CalendarEvent _event;
 
   GlobalKey<FormState> formKey;
   TextEditingController nameController;
   TextEditingController urlController;
+  AuthenticatorInterface _authenticator;
+  CalendarEventSaveUseCase _useCase;
 
-  RegisterFormViewModel(BuildContext context, DateTime currentDate, String url)
-      : _event = CalendarEvent() {
-    _context = context;
-    _event.startDateTime = currentDate;
+  EditFormViewModel(
+      {AuthenticatorInterface authenticator, CalendarEventSaveUseCase useCase})
+      : _authenticator = authenticator,
+        _useCase = useCase {
+    assert(_authenticator != null);
+    assert(_useCase != null);
+  }
+
+  void init(CalendarEvent event) {
+    _event = event;
     formKey = GlobalKey<FormState>();
-    nameController = TextEditingController();
-    urlController = TextEditingController(text: url);
+    nameController = TextEditingController(text: _event.name);
+    urlController = TextEditingController(text: _event.url);
   }
 
   String get name => _event.name;
@@ -93,6 +99,9 @@ class RegisterFormViewModel with ChangeNotifier {
   }
 
   set endTime(TimeOfDay time) {
+    if (time == null) {
+      return;
+    }
     _event.endDateTime = DateTime(
         _event.endDateTime.year,
         _event.endDateTime.month,
@@ -137,21 +146,12 @@ class RegisterFormViewModel with ChangeNotifier {
   }
 
   /// イベントの登録を実行する
-  Future<bool> registerEvent() async {
-    AuthenticatorInterface authenticator =
-        Provider.of<AuthenticatorInterface>(_context, listen: false);
-    CalendarEventSaveUseCase useCase =
-        Provider.of<CalendarEventSaveUseCase>(_context, listen: false);
-
+  Future<bool> updateEvent() async {
     try {
       if (!formKey.currentState.validate()) {
         return false;
       }
-      await useCase.execute(await authenticator.getUser(), _event);
-      nameController.clear();
-      urlController.clear();
-      name = '';
-      notifyListeners();
+      await _useCase.execute(await _authenticator.getUser(), _event);
     } catch (e) {
       print(e);
       return false;

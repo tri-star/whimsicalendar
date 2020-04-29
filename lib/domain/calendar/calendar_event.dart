@@ -25,10 +25,14 @@ class CalendarEvent extends calendar_widget.CalendarEvent {
   /// イベント名に関するバリデーション
   List<ValidationError> validateName() {
     List<ValidationError> errors = [];
+    if (name == null) {
+      errors.add(ValidationError(message: 'イベント名が入力されていません'));
+      return errors;
+    }
     if (name.trim().length == 0) {
       errors.add(ValidationError(message: 'イベント名が入力されていません'));
     }
-    if (name.trim().length >= 10) {
+    if (name.trim().length > 10) {
       errors.add(ValidationError(message: 'イベント名が長すぎます'));
     }
     return errors;

@@ -9,6 +9,6 @@ class CalendarEventSaveUseCase {
   CalendarEventSaveUseCase(this.calendarEventRepository);
 
   Future<void> execute(User user, CalendarEvent event) async {
-    this.calendarEventRepository.save(user, event);
+    await this.calendarEventRepository.save(user, event);
   }
 }

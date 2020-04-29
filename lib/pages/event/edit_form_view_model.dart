@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/domain/calendar/calendar_event.dart';
+import 'package:whimsicalendar/usecases/calendar_event/calendar_event_save_use_case.dart';
 
 /// イベント編集画面のViewModel
 class EditFormViewModel with ChangeNotifier {
@@ -11,10 +12,15 @@ class EditFormViewModel with ChangeNotifier {
   TextEditingController nameController;
   TextEditingController urlController;
   AuthenticatorInterface _authenticator;
-//  CalendarEventRegisterUseCase useCase;
+  CalendarEventSaveUseCase _useCase;
 
-  EditFormViewModel({AuthenticatorInterface authenticator})
-      : _authenticator = authenticator;
+  EditFormViewModel(
+      {AuthenticatorInterface authenticator, CalendarEventSaveUseCase useCase})
+      : _authenticator = authenticator,
+        _useCase = useCase {
+    assert(_authenticator != null);
+    assert(_useCase != null);
+  }
 
   void init(CalendarEvent event) {
     _event = event;
@@ -93,6 +99,9 @@ class EditFormViewModel with ChangeNotifier {
   }
 
   set endTime(TimeOfDay time) {
+    if (time == null) {
+      return;
+    }
     _event.endDateTime = DateTime(
         _event.endDateTime.year,
         _event.endDateTime.month,
@@ -138,18 +147,11 @@ class EditFormViewModel with ChangeNotifier {
 
   /// イベントの登録を実行する
   Future<bool> updateEvent() async {
-//    CalendarEventRegisterUseCase useCase =
-//        Provider.of<CalendarEventRegisterUseCase>(_context, listen: false);
-
     try {
       if (!formKey.currentState.validate()) {
         return false;
       }
-//      await useCase.execute(await authenticator.getUser(), _event);
-      nameController.clear();
-      urlController.clear();
-      name = '';
-      notifyListeners();
+      await _useCase.execute(await _authenticator.getUser(), _event);
     } catch (e) {
       print(e);
       return false;

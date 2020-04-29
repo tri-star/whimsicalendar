@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/domain/calendar/calendar_event.dart';
+import 'package:whimsicalendar/domain/calendar/calendar_event_repository_interface.dart';
 import 'package:whimsicalendar/infrastructure/auth/google_authenticator.dart';
+import 'package:whimsicalendar/infrastructure/repositories/calendar_event/calendar_repository.dart';
 import 'package:whimsicalendar/pages/event/edit_form_view_model.dart';
+import 'package:whimsicalendar/usecases/calendar_event/calendar_event_save_use_case.dart';
 import 'package:whimsicalendar/widgets/date_time_input/date_input.dart';
 import 'package:whimsicalendar/widgets/date_time_input/date_time_input.dart';
 import 'package:whimsicalendar/widgets/labeled_checkbox.dart';
@@ -24,10 +27,19 @@ class EventEditFormPage extends StatelessWidget {
         providers: [
           Provider<AuthenticatorInterface>(
               create: (_) => GoogleAuthenticator()),
+          Provider<CalendarEventRepositoryInterface>(
+              create: (_) => CalendarEventRepository()),
+          Provider<CalendarEventSaveUseCase>(create: (BuildContext context) {
+            return CalendarEventSaveUseCase(
+                Provider.of<CalendarEventRepositoryInterface>(context,
+                    listen: false));
+          }),
           ChangeNotifierProvider<EditFormViewModel>(
               create: (BuildContext context) {
             return EditFormViewModel(
-                authenticator: Provider.of<AuthenticatorInterface>(context,
+                authenticator:
+                    Provider.of<AuthenticatorInterface>(context, listen: false),
+                useCase: Provider.of<CalendarEventSaveUseCase>(context,
                     listen: false));
           }),
         ],

@@ -29,12 +29,32 @@ class TopPage extends StatelessWidget {
           return Scaffold(
               appBar: AppBar(title: Text('Whisimicalendar')),
               body: Column(children: [CalendarSection()]),
+              drawer: _buildDrawer(context),
               floatingActionButton: Builder(builder: (BuildContext context) {
                 return FloatingActionButton(
                     onPressed: () => _onFloatingActionButtonPressed(context),
                     child: Icon(Icons.add));
               }));
         }));
+  }
+
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+        child: ListView(padding: EdgeInsets.zero, children: [
+      Container(
+        decoration: BoxDecoration(color: Colors.blue),
+        height: 80,
+        alignment: Alignment.centerLeft,
+        child: ListTile(
+            title: Text('Menu', style: TextStyle(color: Colors.white))),
+      ),
+      ListTile(
+          title: Text('ライセンス情報'),
+          onTap: () {
+            showLicensePage(context: context);
+            //Navigator.of(context).pop();
+          }),
+    ]));
   }
 
   /// FABを押下した時の動作

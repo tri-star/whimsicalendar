@@ -49,10 +49,16 @@ class TopPage extends StatelessWidget {
             title: Text('Menu', style: TextStyle(color: Colors.white))),
       ),
       ListTile(
-          title: Text('ライセンス情報'),
+          title: Text('このアプリについて'),
           onTap: () {
-            showLicensePage(context: context);
-            //Navigator.of(context).pop();
+            Navigator.of(context).pop();
+          }),
+      ListTile(
+          title: Text('ライセンス情報'),
+          onTap: () async {
+            showLicensePage(
+              context: context,
+            );
           }),
     ]));
   }

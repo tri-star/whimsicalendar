@@ -54,4 +54,5 @@ jobs:
         run: |
           cd ios
           npm install -g firebase-tools
+          flutter build ios
           fastlane adhoc

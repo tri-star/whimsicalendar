@@ -1,0 +1,43 @@
+default_platform(:ios)
+
+platform :ios do
+
+    desc "Import Certificates and Provisioning Profile"
+    private_lane :import_certificates_and_provisioning_profile do
+        create_keychain(
+            name: "mykeychain",
+            password: ENV["KEYCHAIN_PASSWORD"],
+            timeout: 1800
+        )
+        import_certificate(
+            certificate_path: "ios_distribution.p12",
+            certificate_password: ENV["CERT_PASSWORD"],
+            keychain_name: "mykeychain",
+            keychain_password: ENV["KEYCHAIN_PASSWORD"]
+        )
+        install_provisioning_profile(path: "adhoc.mobileprovision")
+    end
+
+    desc "Archive AdHoc and send to Firebase"
+    lane :adhoc do
+        import_certificates_and_provisioning_profile
+        build_app(project: "Runner.xcodeproj",
+            scheme: "Runner",
+            configuration: "Release",
+            clean: true,
+            export_options: {
+            method: "ad-hoc"
+        })
+        firebase_app_distribution(
+            app: "whimsicalendar",
+            groups: "developer",
+            release_notes: "test",
+            firebase_cli_path: `which firebase`.strip()
+        )
+        slack(
+            message: "ベータ版が配信されました\nhttps://appdistribution.firebase.dev/app_distro/projects",
+            slack_url: ENV["SLACK_URL"]
+        )
+    end
+
+end

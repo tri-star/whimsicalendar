@@ -22,6 +22,7 @@ platform :ios do
     lane :adhoc do
         import_certificates_and_provisioning_profile
         build_app(project: "Runner.xcodeproj",
+            workspace: "Runner.xcworkspace",
             scheme: "Runner",
             configuration: "Release",
             clean: true,

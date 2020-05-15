@@ -1,4 +1,4 @@
-target 'whisimicalendar' do
+target 'Runner' do
 
     pod 'Firebase/Analytics'
     pod 'Firebase/Auth'

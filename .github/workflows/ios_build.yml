@@ -20,6 +20,18 @@ jobs:
         with:
           flutter-version: '1.12.13+hotfix.9'
 
+      - uses: actions/cache@v1
+        id: pods-cache
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+
+      - uses: actions/cache@v1
+        id: flutter-cache
+        with:
+          path: $FLUTTER_HOME
+          key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.lock') }}
+
       - name: Flutter build
         run: |
           flutter pub get
@@ -28,6 +40,9 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '10.x'
+
+      - name: install firebase-tools
+        run: npm install -g firebase-tools
 
       - name: Select Xcode version
         run: cd ios && sudo xcode-select -s '/Applications/Xcode_11.2.1.app'
@@ -54,17 +69,20 @@ jobs:
 
       - name: debug directories
         run: |
-          echo ".pub-cache"
-          ls -l ~/.pub-cache || echo ".pub-cache not found"
-          echo ""
-          echo "build"
-          ls -l ./build || echo "build not found"
+          echo "hostedtoolcache"
+          ls -l /Users/runner/hostedtoolcache || echo "not found"
           echo ""
           echo "ios"
           ls -l ./ios || echo "ios not found"
           echo ""
           echo "global node_modules"
-          ls -l /usr/local/lib/node_modules || echo "global node_modules not found"
+          ls -l /usr/local/lib/node_modules || echo "not found"
+          echo ""
+          echo "flutter"
+          ls -l $FLUTTER_HOME || echo "not found"
+          echo ""
+          echo "Pods"
+          ls -l ios/Pods || echo "not found"
 
       - name: Adhoc
         env:
@@ -74,5 +92,4 @@ jobs:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
           cd ios
-          npm install -g firebase-tools
           fastlane adhoc

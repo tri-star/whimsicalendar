@@ -21,7 +21,7 @@ platform :ios do
     desc "Archive AdHoc and send to Firebase"
     lane :adhoc do
         import_certificates_and_provisioning_profile
-        build_app(project: "Runner.xcodeproj",
+        build_app(workspace: "Runner.xcworkspace",
             scheme: "Runner",
             configuration: "Release",
             clean: true,

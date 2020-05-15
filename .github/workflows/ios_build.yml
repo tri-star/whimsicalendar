@@ -20,6 +20,12 @@ jobs:
         with:
           flutter-version: '1.12.13+hotfix.9'
 
+      - uses: actions/cache@v1
+        id: pods-cache
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+
       - name: Flutter build
         run: |
           flutter pub get
@@ -54,17 +60,20 @@ jobs:
 
       - name: debug directories
         run: |
-          echo ".pub-cache"
-          ls -l ~/.pub-cache || echo ".pub-cache not found"
-          echo ""
-          echo "build"
-          ls -l ./build || echo "build not found"
+          echo "hostedtoolcache"
+          ls -l /Users/runner/hostedtoolcache || echo "not found"
           echo ""
           echo "ios"
           ls -l ./ios || echo "ios not found"
           echo ""
           echo "global node_modules"
-          ls -l /usr/local/lib/node_modules || echo "global node_modules not found"
+          ls -l /usr/local/lib/node_modules || echo "not found"
+          echo ""
+          echo ".npm"
+          ls -l ~/.npm || echo "not found"
+          echo ""
+          echo "Pods"
+          ls -l Pods || echo "not found"
 
       - name: Adhoc
         env:

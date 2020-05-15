@@ -52,10 +52,19 @@ jobs:
           echo "${{ secrets.PROVISIONING_PROFILE }}" > adhoc.mobileprovision.txt
           base64 --decode adhoc.mobileprovision.txt > adhoc.mobileprovision
 
-      - name: list files
+      - name: debug directories
         run: |
-          cd ios
-          ls -l
+          echo ".pub-cache"
+          ls -l ~/.pub-cache || echo ".pub-cache not found"
+          echo ""
+          echo "build"
+          ls -l ./build || echo "build not found"
+          echo ""
+          echo "ios"
+          ls -l ./ios || echo "ios not found"
+          echo ""
+          echo "global node_modules"
+          ls -l /usr/local/lib/node_modules || echo "global node_modules not found"
 
       - name: Adhoc
         env:

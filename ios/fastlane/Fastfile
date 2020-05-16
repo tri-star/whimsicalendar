@@ -6,6 +6,7 @@ platform :ios do
     private_lane :import_certificates_and_provisioning_profile do
         create_keychain(
             name: "mykeychain",
+            path: "/Users/runner/Library/Keychains/mykeychain-db",
             password: ENV["KEYCHAIN_PASSWORD"],
             timeout: 1800
         )

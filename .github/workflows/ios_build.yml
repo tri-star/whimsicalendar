@@ -61,7 +61,7 @@ jobs:
       - name: Keychain.p12
         run: |
           cd ios
-          echo "${{ secrets.PRIVATE_KEY }}" > ios_distribution.p12.txt
+          echo "${{ secrets.IOS_PRIVATE_KEY }}" > ios_distribution.p12.txt
           base64 --decode ios_distribution.p12.txt > ios_distribution.p12
 
       - name: ProvisioningProfile

@@ -11,7 +11,6 @@ platform :ios do
         )
         import_certificate(
             certificate_path: "ios_distribution.p12",
-            certificate_password: ENV["CERT_PASSWORD"],
             keychain_name: "mykeychain",
             keychain_password: ENV["KEYCHAIN_PASSWORD"]
         )

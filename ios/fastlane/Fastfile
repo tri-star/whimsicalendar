@@ -5,16 +5,16 @@ platform :ios do
     desc "Import Certificates and Provisioning Profile"
     private_lane :import_certificates_and_provisioning_profile do
         create_keychain(
-            name: "mykeychain",
-            password: ENV["KEYCHAIN_PASSWORD"],
-            timeout: 1800,
-            default_keychain: true
+            default_keychain: true,
+            path: "/Users/runner/Library/Keychains/mykeychain-db",
+            password: "",
+            unlock: true,
+            timeout: 1800
         )
         import_certificate(
             certificate_path: "ios_distribution.p12",
-            keychain_name: "mykeychain",
-            keychain_path: lane_context[SharedValues::ORIGINAL_DEFAULT_KEYCHAIN],
-            keychain_password: ENV["KEYCHAIN_PASSWORD"],
+            keychain_path: "/Users/runner/Library/Keychains/mykeychain-db",
+            keychain_password: "",
             log_output: true
         )
         install_provisioning_profile(path: "adhoc.mobileprovision")

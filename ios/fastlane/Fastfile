@@ -6,12 +6,14 @@ platform :ios do
     private_lane :import_certificates_and_provisioning_profile do
         create_keychain(
             default_keychain: true,
+            path: "/Users/runner/Library/Keychains/mykeychain-db",
             password: "",
             unlock: true,
             timeout: 1800
         )
         import_certificate(
             certificate_path: "ios_distribution.p12",
+            keychain_path: "/Users/runner/Library/Keychains/mykeychain-db",
             keychain_password: "",
             log_output: true
         )

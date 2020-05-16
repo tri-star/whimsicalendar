@@ -13,6 +13,7 @@ platform :ios do
         )
         import_certificate(
             certificate_path: "ios_distribution.p12",
+            certificate_password: "",
             keychain_path: "/Users/runner/Library/Keychains/mykeychain-db",
             keychain_password: "",
             log_output: true

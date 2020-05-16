@@ -7,7 +7,7 @@ platform :ios do
         create_keychain(
             default_keychain: true,
             path: "/Users/runner/Library/Keychains/mykeychain-db",
-            password: "",
+            password: ENV["KEYCHAIN_PASSWORD"],
             unlock: true,
             timeout: 1800
         )
@@ -15,7 +15,7 @@ platform :ios do
             certificate_path: "ios_distribution.cer",
             certificate_password: "",
             keychain_path: "/Users/runner/Library/Keychains/mykeychain-db",
-            keychain_password: "",
+            keychain_password: ENV["KEYCHAIN_PASSWORD"],
             log_output: true
         )
         install_provisioning_profile(path: "adhoc.mobileprovision")

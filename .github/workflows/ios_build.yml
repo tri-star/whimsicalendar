@@ -13,6 +13,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Cache Flutter
+        uses: actions/cache@v1
+        id: flutter-cache
+        env:
+          FLUTTER_VERSION: 1.12.13-hotfix.9
+        with:
+          path: /Users/runner/hostedtoolcache/flutter/${FLUTTER_VERSION}-stable
+          key: ${{ runner.os }}-flutter-${FLUTTER_VERSION}
+
       - uses: actions/setup-java@v1
         with:
           java-version: '12.x'
@@ -25,12 +34,6 @@ jobs:
         with:
           path: ios/Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
-
-      - uses: actions/cache@v1
-        id: flutter-cache
-        with:
-          path: $FLUTTER_HOME
-          key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.lock') }}
 
       - name: Flutter build
         run: |
@@ -78,7 +81,7 @@ jobs:
           echo "global node_modules"
           ls -l /usr/local/lib/node_modules || echo "not found"
           echo ""
-          echo "flutter"
+          echo "flutter: $FLUTTER_HOME"
           ls -l $FLUTTER_HOME || echo "not found"
           echo ""
           echo "Pods"

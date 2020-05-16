@@ -13,12 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-#      - name: Cache Flutter
-#        uses: actions/cache@v1
-#        id: flutter-cache
-#        with:
-#          path: ${{ FLUTTER_HOME }}
-#          key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.lock') }}
+      - name: Cache Flutter
+        uses: actions/cache@v1
+        id: flutter-cache
+        env:
+          FLUTTER_VERSION: 1.12.13-hotfix.9
+        with:
+          path: /Users/runner/hostedtoolcache/flutter/${FLUTTER_VERSION}-stable
+          key: ${{ runner.os }}-flutter-${FLUTTER_VERSION}
 
       - uses: actions/setup-java@v1
         with:

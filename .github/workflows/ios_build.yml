@@ -13,6 +13,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Cache Flutter
+        uses: actions/cache@v1
+        id: flutter-cache
+        with:
+          path: $FLUTTER_HOME
+          key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.lock') }}
+
       - uses: actions/setup-java@v1
         with:
           java-version: '12.x'
@@ -25,12 +32,6 @@ jobs:
         with:
           path: ios/Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
-
-      - uses: actions/cache@v1
-        id: flutter-cache
-        with:
-          path: $FLUTTER_HOME
-          key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.lock') }}
 
       - name: Flutter build
         run: |

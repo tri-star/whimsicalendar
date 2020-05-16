@@ -7,13 +7,12 @@ platform :ios do
         create_keychain(
             name: "mykeychain",
             password: ENV["KEYCHAIN_PASSWORD"],
-            timeout: 1800,
-            default_keychain: true
+            timeout: 1800
         )
         import_certificate(
             certificate_path: "ios_distribution.p12",
             keychain_name: "mykeychain",
-            keychain_path: lane_context[SharedValues::ORIGINAL_DEFAULT_KEYCHAIN],
+            keychain_path: "/Users/runner/Library/Keychains/mykeychain-db",
             keychain_password: ENV["KEYCHAIN_PASSWORD"],
             log_output: true
         )

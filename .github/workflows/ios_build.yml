@@ -85,12 +85,12 @@ jobs:
           echo "Pods"
           ls -l ios/Pods || echo "not found"
 
-#      - name: Adhoc
-#        env:
-#          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-#          SLACK_URL: ${{ secrets.SLACK_URL }}
-#          CERT_PASSWORD: ${{ secrets.CERT_PASSWORD }}
-#          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-#        run: |
-#          cd ios
-#          fastlane adhoc
+      - name: Adhoc
+        env:
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          SLACK_URL: ${{ secrets.SLACK_URL }}
+          CERT_PASSWORD: ${{ secrets.CERT_PASSWORD }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          cd ios
+          fastlane adhoc

@@ -7,12 +7,15 @@ platform :ios do
         create_keychain(
             name: "mykeychain",
             password: ENV["KEYCHAIN_PASSWORD"],
-            timeout: 1800
+            timeout: 1800,
+            default_keychain: true
         )
         import_certificate(
             certificate_path: "ios_distribution.p12",
             keychain_name: "mykeychain",
-            keychain_password: ENV["KEYCHAIN_PASSWORD"]
+            keychain_path: lane_context[SharedValues::ORIGINAL_DEFAULT_KEYCHAIN],
+            keychain_password: ENV["KEYCHAIN_PASSWORD"],
+            log_output: true
         )
         install_provisioning_profile(path: "adhoc.mobileprovision")
     end

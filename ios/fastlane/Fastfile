@@ -13,7 +13,7 @@ platform :ios do
         )
         ENV['MATCH_KEYCHAIN_NAME'] = "mykeychain"
         ENV['MATCH_KEYCHAIN_PASSWORD'] = ENV["KEYCHAIN_PASSWORD"]
-        match(type: "adhoc", readonly: true)
+        match(type: "adhoc")
         debug
         slack(
             message: "Process complete.",

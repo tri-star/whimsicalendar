@@ -39,4 +39,4 @@ jobs:
           ls -l
           echo ""
           echo "-- fastlane ----------------------------"
-          ls -l fstlane
+          ls -l fastlane

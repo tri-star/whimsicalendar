@@ -18,6 +18,7 @@ platform :ios do
             git_branch: "match-certs",
             git_basic_authorization: Base64.strict_encode64("tri-star:#{ENV['GITHUB_TOKEN']}"),
             clone_branch_directly: true,
+            output_path: "ios/fastlane",
             shallow_clone: true
         )
         slack(

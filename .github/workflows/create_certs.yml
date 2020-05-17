@@ -28,6 +28,7 @@ jobs:
           FASTLANE_USERNAME: ${{ secrets.FASTLANE_USERNAME }}
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
           FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
         run: |
           cd ios
           fastlane create_certs --verbose
@@ -38,4 +39,4 @@ jobs:
           ls -l
           echo ""
           echo "-- fastlane ----------------------------"
-          ls -l fstlane
+          ls -l fastlane

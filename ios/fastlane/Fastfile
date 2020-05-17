@@ -2,6 +2,23 @@ default_platform(:ios)
 
 platform :ios do
 
+    desc "Create certs"
+    lane :create_certs do
+        create_keychain(
+            default_keychain: true,
+            path: "/Users/runner/Library/Keychains/mykeychain-db",
+            password: ENV["KEYCHAIN_PASSWORD"],
+            unlock: true,
+            timeout: 180
+        )
+        match(type: "adhoc")
+        debug
+        slack(
+            message: "Process complete.",
+            slack_url: ENV["SLACK_URL"]
+        )
+    end
+
     desc "Import Certificates and Provisioning Profile"
     private_lane :import_certificates_and_provisioning_profile do
         create_keychain(

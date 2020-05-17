@@ -13,7 +13,10 @@ platform :ios do
         )
         ENV['MATCH_KEYCHAIN_NAME'] = "mykeychain"
         ENV['MATCH_KEYCHAIN_PASSWORD'] = ENV["KEYCHAIN_PASSWORD"]
-        match(type: "adhoc")
+        match(
+            type: "adhoc",
+            git_basic_authorization: Base64.strict_encode64("tri-star:#{ENV['GITHUB_TOKEN']}")
+        )
         debug
         slack(
             message: "Process complete.",

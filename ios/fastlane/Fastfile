@@ -11,13 +11,15 @@ platform :ios do
             unlock: true,
             timeout: 180
         )
-        ENV['MATCH_KEYCHAIN_NAME'] = "mykeychain"
-        ENV['MATCH_KEYCHAIN_PASSWORD'] = ENV["KEYCHAIN_PASSWORD"]
         match(
             type: "adhoc",
-            git_basic_authorization: Base64.strict_encode64("tri-star:#{ENV['GITHUB_TOKEN']}")
+            keychain_name: "mykeychain",
+            keychain_password: ENV["KEYCHAIN_PASSWORD"],
+            git_branch: "match-certs",
+            git_basic_authorization: Base64.strict_encode64("tri-star:#{ENV['GITHUB_TOKEN']}"),
+            clone_branch_directly: true,
+            shallow_clone: true
         )
-        debug
         slack(
             message: "Process complete.",
             slack_url: ENV["SLACK_URL"]

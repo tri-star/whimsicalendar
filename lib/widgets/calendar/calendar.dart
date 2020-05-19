@@ -52,19 +52,22 @@ class CalendarViewState extends State<CalendarView> {
               onHorizontalDragEnd: _onHorizontalSwipeEnd,
               child: CalendarSwitcher.buildAnimatedSwitcher(
                   controller: controller,
-                  child: Column(
+                  //縦方向に対する"overflowing RenderFlex"エラーを回避するためにListViewを入れている
+                  child: ListView(
                       // AnimatedSwitcherが要素を識別するためにKeyが必要
                       key: ValueKey<DateTime>(controller.currentMonth),
                       children: [
-                        _buildHeaderSection(),
-                        Table(
-                          border: TableBorder.all(
-                              color: Colors.grey[900], width: 1),
-                          children: [
-                            ..._buildCalendarWeekHeaders(),
-                            ..._buildCalendarRows()
-                          ],
-                        )
+                        Column(children: [
+                          _buildHeaderSection(),
+                          Table(
+                            border: TableBorder.all(
+                                color: Colors.grey[900], width: 1),
+                            children: [
+                              ..._buildCalendarWeekHeaders(),
+                              ..._buildCalendarRows()
+                            ],
+                          )
+                        ])
                       ])));
         }));
   }

@@ -1,4 +1,4 @@
-name: iOSBuild
+name: iOS Deploy
 
 on:
   push:
@@ -26,9 +26,6 @@ jobs:
           gem install bundler
           bundle install
 
-      - name: xcodebuild help
-        run: xcodebuild -help
-
       - name: Flutter build
         run: |
           flutter pub get
@@ -53,23 +50,6 @@ jobs:
           cd ios
           echo "${{ secrets.GOOGLE_SERVICES_IOS_PLIST }}" > Runner/GoogleService-Info.plist
 
-      - name: debug directories
-        run: |
-          echo "hostedtoolcache"
-          ls -l /Users/runner/hostedtoolcache || echo "not found"
-          echo ""
-          echo "ios"
-          ls -l ./ios || echo "ios not found"
-          echo ""
-          echo "global node_modules"
-          ls -l /usr/local/lib/node_modules || echo "not found"
-          echo ""
-          echo "flutter: $FLUTTER_HOME"
-          ls -l $FLUTTER_HOME || echo "not found"
-          echo ""
-          echo "Pods"
-          ls -l ios/Pods || echo "not found"
-
       - name: Adhoc
         env:
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -82,6 +62,8 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CODE_SIGNING_IDENTITY: ${{ secrets.CODE_SIGNING_IDENTITY }}
+          APPLE_APP_ID: "net.urban-theory.whimsicalendar"
+          APPLE_TEAM_ID: "F946L3T4HH"
         run: |
           cd ios
           bundle exec fastlane adhoc --verbose

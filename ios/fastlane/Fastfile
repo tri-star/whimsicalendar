@@ -42,9 +42,9 @@ platform :ios do
             timeout: 7200
         )
 
-        MY_APP_ID = "net.urban-theory.whimsicalendar"
+        MY_APP_ID = ENV["APPLE_APP_ID"]
         MY_PROFILE = "match AdHoc net.urban-theory.whimsicalendar 1589695224"
-        MY_TEAM = "F946L3T4HH"
+        MY_TEAM = ENV["APPLE_TEAM_ID"]
 
         match(
             readonly: true,
@@ -78,12 +78,9 @@ platform :ios do
             xcargs: settings_to_override,
             export_options: {
                 uploadSymbols: false,
-                provisioningProfiles: {
-                    MY_APP_ID => MY_PROFILE
-                }
+                provisioningProfiles: ENV["MATCH_PROVISIONING_PROFILE_MAPPING"]
             }
         )
-        # provisioningProfiles: ENV["MATCH_PROVISIONING_PROFILE_MAPPING"]
 
         firebase_app_distribution(
             app: ENV["FIREBASE_APP_ID"],

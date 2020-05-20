@@ -36,7 +36,6 @@ platform :ios do
         )
 
         MY_APP_ID = ENV["APPLE_APP_ID"]
-        MY_PROFILE = "match AdHoc net.urban-theory.whimsicalendar 1589695224"
         MY_TEAM = ENV["APPLE_TEAM_ID"]
 
         match(
@@ -53,13 +52,11 @@ platform :ios do
             path: "Runner.xcodeproj",
             targets: "Runner",
             code_sign_identity: "iPhone Distribution",
-            profile_name: MY_PROFILE,
             use_automatic_signing: false
         )
 
         settings_to_override = {
             :BUNDLE_IDENTIFIER => MY_APP_ID,
-            :PROVISIONING_PROFILE_SPECIFIER => MY_PROFILE,
             :DEVELOPMENT_TEAM => MY_TEAM
         }
         build_app(workspace: "Runner.xcworkspace",

@@ -52,15 +52,17 @@ platform :ios do
             use_automatic_signing: false
         )
 
-        settings_to_override = {
-            :BUNDLE_IDENTIFIER => ENV["APPLE_APP_ID"],
-            :DEVELOPMENT_TEAM => ENV["APPLE_TEAM_ID"]
-        }
+        apple_app_id = ENV["APPLE_APP_ID"]
+        provisioning_profile_specifier = lane_context[:MATCH_PROVISIONING_PROFILE_MAPPING][apple_app_id]
         build_app(workspace: "Runner.xcworkspace",
             export_method: "ad-hoc",
             scheme: "Runner",
             configuration: "Release",
-            xcargs: settings_to_override,
+            xcargs: {
+            :BUNDLE_IDENTIFIER => apple_app_id,
+            :PROVISIONING_PROFILE_SPECIFIER => provisioning_profile_specifier,
+            :DEVELOPMENT_TEAM => ENV["APPLE_TEAM_ID"]
+            },
             export_options: {
                 uploadSymbols: false,
                 provisioningProfiles: ENV["MATCH_PROVISIONING_PROFILE_MAPPING"]

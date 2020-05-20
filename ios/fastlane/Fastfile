@@ -4,25 +4,21 @@ platform :ios do
 
     desc "Create certs"
     lane :create_certs do
-        create_keychain(
-            default_keychain: true,
-            name: "mykeychain",
-            password: ENV["KEYCHAIN_PASSWORD"],
-            unlock: true,
-            timeout: 180
+
+        setup_ci(
+          provider: "travis",
+          force: true
         )
+
         match(
             type: "adhoc",
-            keychain_name: "mykeychain",
-            keychain_password: ENV["KEYCHAIN_PASSWORD"],
-            git_branch: "create-certs",
-            git_basic_authorization: Base64.strict_encode64("tri-star:#{ENV['GITHUB_TOKEN']}"),
+            app_identifier: ENV["APPLE_APP_ID"],
             clone_branch_directly: true,
-            output_path: "ios/fastlane",
             shallow_clone: true
         )
+
         slack(
-            message: "Process complete.",
+            message: "Init certificate complete.",
             slack_url: ENV["SLACK_URL"]
         )
     end
@@ -39,8 +35,6 @@ platform :ios do
             readonly: true,
             type: "adhoc",
             app_identifier: ENV["APPLE_APP_ID"],
-            git_branch: "deploy",
-            git_basic_authorization: Base64.strict_encode64("tri-star:#{ENV['GITHUB_TOKEN']}"),
             clone_branch_directly: true,
             shallow_clone: true
         )

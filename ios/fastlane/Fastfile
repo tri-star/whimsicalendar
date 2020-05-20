@@ -35,13 +35,10 @@ platform :ios do
           force: true
         )
 
-        MY_APP_ID = ENV["APPLE_APP_ID"]
-        MY_TEAM = ENV["APPLE_TEAM_ID"]
-
         match(
             readonly: true,
             type: "adhoc",
-            app_identifier: MY_APP_ID,
+            app_identifier: ENV["APPLE_APP_ID"],
             git_branch: "deploy",
             git_basic_authorization: Base64.strict_encode64("tri-star:#{ENV['GITHUB_TOKEN']}"),
             clone_branch_directly: true,
@@ -56,8 +53,8 @@ platform :ios do
         )
 
         settings_to_override = {
-            :BUNDLE_IDENTIFIER => MY_APP_ID,
-            :DEVELOPMENT_TEAM => MY_TEAM
+            :BUNDLE_IDENTIFIER => ENV["APPLE_APP_ID"],
+            :DEVELOPMENT_TEAM => ENV["APPLE_TEAM_ID"]
         }
         build_app(workspace: "Runner.xcworkspace",
             export_method: "ad-hoc",

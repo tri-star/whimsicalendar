@@ -23,18 +23,11 @@ jobs:
         env:
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
           SLACK_URL: ${{ secrets.SLACK_URL }}
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FASTLANE_USERNAME: ${{ secrets.FASTLANE_USERNAME }}
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
           FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CODE_SIGNING_IDENTITY: ${{ secrets.CODE_SIGNING_IDENTITY }}
-          APPLE_APP_ID: "net.urban-theory.whimsicalendar"
-          APPLE_TEAM_ID: "F946L3T4HH"
         run: |
           cd ios
           bundle exec fastlane create_certs --verbose

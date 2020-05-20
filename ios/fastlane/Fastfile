@@ -5,16 +5,20 @@ platform :ios do
     desc "Create certs"
     lane :create_certs do
 
-        setup_ci(
-          provider: "travis",
-          force: true
+        create_keychain(
+            default_keychain: true,
+            name: "mykeychain",
+            password: ENV["KEYCHAIN_PASSWORD"],
+            unlock: true,
+            timeout: 180
         )
 
         match(
+            readonly: false,
             type: "adhoc",
-            app_identifier: ENV["APPLE_APP_ID"],
-            clone_branch_directly: true,
-            shallow_clone: true
+            keychain_name: "mykeychain",
+            keychain_password: ENV["KEYCHAIN_PASSWORD"],
+            verbose: true
         )
 
         slack(

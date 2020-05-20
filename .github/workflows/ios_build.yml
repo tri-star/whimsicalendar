@@ -59,6 +59,8 @@ jobs:
           FASTLANE_USERNAME: ${{ secrets.FASTLANE_USERNAME }}
           FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CODE_SIGNING_IDENTITY: ${{ secrets.CODE_SIGNING_IDENTITY }}
           APPLE_APP_ID: "net.urban-theory.whimsicalendar"

@@ -1,4 +1,4 @@
-git_url("https://github.com/tri-star/whimsicalendar")
+git_url("https://github.com/tri-star/apple-certs.git")
 
 storage_mode("git")
 

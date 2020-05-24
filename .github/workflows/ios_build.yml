@@ -29,7 +29,9 @@ jobs:
       - name: GoogleService-Info.plist
         run: |
           cd ios
-          echo "${{ secrets.GOOGLE_SERVICES_IOS_PLIST }}" > Runner/GoogleService-Info.plist
+          echo "${GOOGLE_SERVICES_IOS_PLIST}" > Runner/GoogleService-Info.plist
+        env:
+          GOOGLE_SERVICES_IOS_PLIST: ${{ secrets.GOOGLE_SERVICES_IOS_PLIST }}
   
       - name: Flutter build
         run: |

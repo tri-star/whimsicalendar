@@ -26,6 +26,11 @@ jobs:
           gem install bundler
           bundle install
 
+      - name: GoogleService-Info.plist
+        run: |
+          cd ios
+          echo "${{ secrets.GOOGLE_SERVICES_IOS_PLIST }}" > Runner/GoogleService-Info.plist
+  
       - name: Flutter build
         run: |
           flutter pub get
@@ -44,11 +49,6 @@ jobs:
           cd ios
           sudo xcode-select -s '/Applications/Xcode_11.4.1.app'
           xcodebuild -version
-
-      - name: GoogleService-Info.plist
-        run: |
-          cd ios
-          echo "${{ secrets.GOOGLE_SERVICES_IOS_PLIST }}" > Runner/GoogleService-Info.plist
 
       - name: Adhoc
         env:

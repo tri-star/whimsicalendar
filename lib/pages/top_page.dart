@@ -50,7 +50,8 @@ class TopPage extends StatelessWidget {
       ),
       ListTile(
           title: Text('このアプリについて'),
-          onTap: () {
+          onTap: () async {
+            await Navigator.of(context).pushNamed('/about');
             Navigator.of(context).pop();
           }),
       ListTile(

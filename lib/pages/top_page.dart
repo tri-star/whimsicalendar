@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart';
@@ -66,6 +67,7 @@ class TopPage extends StatelessWidget {
 
   /// FABを押下した時の動作
   void _onFloatingActionButtonPressed(BuildContext context) async {
+    Crashlytics.instance.log('test message.');
     final registered = await Navigator.of(context).pushNamed('/event/add',
         arguments: EventRegisterPageArguments(
             currentDate: Provider.of<CalendarViewModel>(context, listen: false)

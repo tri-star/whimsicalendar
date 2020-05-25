@@ -67,6 +67,10 @@ platform :ios do
             }
         )
 
+        upload_symbols_to_crashlytics(
+            gsp_path: 'Runner/GoogleService-Info.plist'
+        )
+
         firebase_app_distribution(
             app: ENV["FIREBASE_APP_ID"],
             groups: "developer",

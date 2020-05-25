@@ -20,6 +20,13 @@ jobs:
         with:
           flutter-version: '1.12.13+hotfix.9'
 
+      - name: Cache CocoaPods
+        id: cache-cocoapods
+        uses: actions/cache@v1
+        with:
+          path: /Users/runner/Library/Caches/CocoaPods/Pods
+          key: ${{ runner.os }}-cache-cocoapods-${{ hashFiles('pubspec.lock') }}
+
       - name: Install fastlane and plugins
         run: |
           cd ios
@@ -39,7 +46,7 @@ jobs:
           flutter build ios --release --no-codesign
 
       - name: list cache directory
-        run: ls -l ${HOME}/Library/Caches/CocoaPods
+        run: ls -l ${HOME}/Library/Caches/CocoaPods/Pods
 
       - uses: actions/setup-node@v1
         with:

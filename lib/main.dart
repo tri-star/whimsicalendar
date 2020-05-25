@@ -5,7 +5,6 @@ import 'package:whimsicalendar/auth/authenticator_interface.dart';
 import 'package:whimsicalendar/infrastructure/auth/google_authenticator.dart';
 import 'package:whimsicalendar/infrastructure/firebase/firebase_app.dart';
 import 'package:whimsicalendar/routes.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'domain/calendar/calendar_event_repository_interface.dart';
 import 'domain/url_sharing/url_sharing_handler_inteface.dart';
 import 'infrastructure/repositories/calendar_event/calendar_repository.dart';
@@ -14,8 +13,6 @@ import 'pages/top_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Crashlytics.instance.enableInDevMode = true;
-  FlutterError.onError = Crashlytics.instance.recordFlutterError;
   FirebaseAppInitializer firebaseAppInitializer = FirebaseAppInitializer();
   FirebaseApp firebaseApp = await firebaseAppInitializer.initialize();
   runApp(MyApp());

@@ -1,41 +1,16 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
+
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:whimsicalendar/auth/authenticator_interface.dart';
-import 'package:whimsicalendar/infrastructure/auth/google_authenticator.dart';
-import 'package:whimsicalendar/infrastructure/firebase/firebase_app.dart';
-import 'package:whimsicalendar/routes.dart';
-import 'domain/calendar/calendar_event_repository_interface.dart';
-import 'domain/url_sharing/url_sharing_handler_inteface.dart';
-import 'infrastructure/repositories/calendar_event/calendar_repository.dart';
-import 'infrastructure/url_sharing/url_sharing_handler.dart';
-import 'pages/top_page.dart';
+
+import 'application.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FirebaseAppInitializer firebaseAppInitializer = FirebaseAppInitializer();
-  FirebaseApp firebaseApp = await firebaseAppInitializer.initialize();
-  Firestore(app: firebaseApp);
-  runApp(MyApp());
-}
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Whisimicalendar',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MultiProvider(providers: [
-        Provider<AuthenticatorInterface>(create: (_) => GoogleAuthenticator()),
-        Provider<CalendarEventRepositoryInterface>(
-            create: (BuildContext context) => CalendarEventRepository()),
-        Provider<UrlSharingHandlerInterface>(
-            create: (BuildContext context) => UrlSharingHandler())
-      ], child: TopPage()),
-      routes: RouteRegistrar().getDefinitions(),
-    );
-  }
+  Crashlytics.instance.enableInDevMode = true;
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
+  runZoned<Future<void>>(() async {
+    runApp(Application());
+  }, onError: Crashlytics.instance.recordError);
 }

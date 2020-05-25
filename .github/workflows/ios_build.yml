@@ -39,7 +39,7 @@ jobs:
           flutter build ios --release --no-codesign
 
       - name: list cache directory
-        run: ls -l ${HOME}/Library/Caches/CocoaPods
+        run: ls -l ${HOME}/Library/Caches/CocoaPods/Pods
 
       - uses: actions/setup-node@v1
         with:

@@ -34,7 +34,8 @@ class DevelopConfig extends Config {
     return {
       'firebase.app_name': 'whimsicalendar',
       'firebase.google_app_id':
-          '1:1062345543356:android:a1b99a204be5fbd07d0ab9',
+          '1:1062345543356:ios:36cf6ded0aa2aa977d0ab9',
+          // '1:1062345543356:android:a1b99a204be5fbd07d0ab9',
       'firebase.gcm_sender_id': '1062345543356',
       'firebase.api_key': 'AIzaSyAUq9mgv4535dyKyRAt8orsa00hQq1zJC0',
       'firebase.project_id': 'whimsicalendar',

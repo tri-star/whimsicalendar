@@ -14,7 +14,7 @@ class Application extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Whisimicalendar',
+      title: 'Whimsicalendar',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

@@ -49,6 +49,19 @@ android {
         multiDexEnabled true
     }
 
+    flavorDimensions "app"
+    productFlavors {
+
+        develop {
+            applicationId "net.urbantheory.whimsicalendar"
+            dimension "app"
+        }
+
+        production {
+            applicationId "net.urbantheory.whimsicalendar"
+            dimension "app"
+        }
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.

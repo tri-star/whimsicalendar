@@ -18,7 +18,14 @@ jobs:
           java-version: '12.x'
       - uses: subosito/flutter-action@v1
         with:
-          flutter-version: '1.12.13+hotfix.9'
+          flutter-version: '1.20.1'
+
+      - name: Cache CocoaPods
+        id: cache-cocoapods
+        uses: actions/cache@v1
+        with:
+          path: /Users/runner/Library/Caches/CocoaPods/Pods
+          key: ${{ runner.os }}-cache-cocoapods-${{ hashFiles('pubspec.lock') }}
 
       - name: Install fastlane and plugins
         run: |
@@ -26,10 +33,20 @@ jobs:
           gem install bundler
           bundle install
 
+      - name: GoogleService-Info.plist
+        run: |
+          cd ios
+          echo "${GOOGLE_SERVICES_INFO_PLIST}" > Runner/GoogleService-Info.plist
+        env:
+          GOOGLE_SERVICES_INFO_PLIST: ${{ secrets.GOOGLE_SERVICES_INFO_PLIST }}
+  
       - name: Flutter build
         run: |
           flutter pub get
           flutter build ios --release --no-codesign
+
+      - name: list cache directory
+        run: ls -l ${HOME}/Library/Caches/CocoaPods/Pods
 
       - uses: actions/setup-node@v1
         with:
@@ -44,11 +61,6 @@ jobs:
           cd ios
           sudo xcode-select -s '/Applications/Xcode_11.4.1.app'
           xcodebuild -version
-
-      - name: GoogleService-Info.plist
-        run: |
-          cd ios
-          echo "${{ secrets.GOOGLE_SERVICES_IOS_PLIST }}" > Runner/GoogleService-Info.plist
 
       - name: Adhoc
         env:

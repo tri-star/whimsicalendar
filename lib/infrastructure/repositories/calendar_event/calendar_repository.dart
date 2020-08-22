@@ -9,7 +9,7 @@ class CalendarEventRepository implements CalendarEventRepositoryInterface {
   @override
   Future<void> save(User user, CalendarEvent event) async {
     if (event.id == null) {
-      await Firestore.instance
+      await FirebaseFirestore.instance
           .collection('calendar_events/${user.id}/events')
           .add({
         'name': event.name,
@@ -20,11 +20,11 @@ class CalendarEventRepository implements CalendarEventRepositoryInterface {
         'description': event.description
       });
     } else {
-      var docRef = Firestore.instance
+      var docRef = FirebaseFirestore.instance
           .collection('calendar_events/${user.id}/events')
-          .document(event.id);
+          .doc(event.id);
 
-      await docRef.updateData({
+      await docRef.update({
         'name': event.name,
         'startDateTime': event.startDateTime,
         'endDateTime': event.endDateTime,
@@ -40,22 +40,22 @@ class CalendarEventRepository implements CalendarEventRepositoryInterface {
       String userId, int year, int month) async {
     DateTime fromDate = DateTime(year, month, 1);
     DateTime toDate = DateTime(year, month + 1, 1, 0, 0, 0);
-    QuerySnapshot snapshot = await Firestore.instance
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('calendar_events/$userId/events')
         .where('startDateTime', isGreaterThanOrEqualTo: fromDate)
         .where('startDateTime', isLessThan: toDate)
         .orderBy('startDateTime')
-        .getDocuments();
+        .get();
 
     List<CalendarEvent> result = List<CalendarEvent>();
-    snapshot.documents.forEach((DocumentSnapshot item) {
+    snapshot.docs.forEach((QueryDocumentSnapshot item) {
       result.add(CalendarEvent(
-          id: item.documentID,
-          name: item['name'],
-          startDateTime: _parseTimeStamp(item['startDateTime']),
-          endDateTime: _parseTimeStamp(item['endDateTime']),
-          url: item['url'],
-          isAllDay: item['isAllDay']));
+          id: item.id,
+          name: item.data()['name'],
+          startDateTime: _parseTimeStamp(item.data()['startDateTime']),
+          endDateTime: _parseTimeStamp(item.data()['endDateTime']),
+          url: item.data()['url'],
+          isAllDay: item.data()['isAllDay']));
     });
 
     return EventCollection<CalendarEvent>.fromList(result);

@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:whimsicalendar/auth/authenticator_interface.dart'
     as authenticator_interface;
@@ -8,7 +8,7 @@ import 'package:whimsicalendar/domain/user/user.dart';
 class GoogleAuthenticator
     implements authenticator_interface.AuthenticatorInterface {
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['profile']);
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final firebase.FirebaseAuth _firebaseAuth = firebase.FirebaseAuth.instance;
 
   User _user;
 
@@ -18,7 +18,7 @@ class GoogleAuthenticator
   @override
   Future<User> getUser() async {
     if (_user == null) {
-      var firebaseUser = await _firebaseAuth.currentUser();
+      var firebaseUser = _firebaseAuth.currentUser;
       if (firebaseUser != null) {
         _user = _createFromFirebaseUser(firebaseUser);
       }
@@ -36,7 +36,7 @@ class GoogleAuthenticator
   /// サインインを実行する
   @override
   Future<bool> signIn() async {
-    FirebaseUser firebaseUser = await _firebaseSignIn();
+    firebase.User firebaseUser = await _firebaseSignIn();
     if (firebaseUser == null) {
       _user = null;
       return false;
@@ -46,7 +46,7 @@ class GoogleAuthenticator
   }
 
   /// Googleアカウントを使用してFirebaseにログインする
-  Future<FirebaseUser> _firebaseSignIn() async {
+  Future<firebase.User> _firebaseSignIn() async {
     GoogleSignInAccount currentUser = _googleSignIn.currentUser;
     try {
       // 先にGoogleアカウントでログインする
@@ -63,10 +63,10 @@ class GoogleAuthenticator
       //ログインしたGoogleアカウントからアクセストークンなどを取得して、
       //そのトークンでFirebaseにログインする。
       GoogleSignInAuthentication googleAuth = await currentUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.getCredential(
+      final firebase.AuthCredential credential = firebase.GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
-      final FirebaseUser firebaseUser =
+      final firebase.User firebaseUser =
           (await _firebaseAuth.signInWithCredential(credential)).user;
 
       return firebaseUser;
@@ -75,8 +75,8 @@ class GoogleAuthenticator
     }
   }
 
-  User _createFromFirebaseUser(FirebaseUser firebaseUser) {
+  User _createFromFirebaseUser(firebase.User firebaseUser) {
     return User(
-        name: '', id: firebaseUser.uid, photoUrl: firebaseUser.photoUrl);
+        name: '', id: firebaseUser.uid, photoUrl: firebaseUser.photoURL);
   }
 }

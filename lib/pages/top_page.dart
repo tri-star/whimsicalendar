@@ -67,7 +67,9 @@ class TopPage extends StatelessWidget {
 
   /// FABを押下した時の動作
   void _onFloatingActionButtonPressed(BuildContext context) async {
-    Crashlytics.instance.log('test message.');
+    //FirebaseCrashlytics.instance.log('test message.');
+    //FirebaseCrashlytics.instance.crash();
+    //throw StateError('test error3');
     final registered = await Navigator.of(context).pushNamed('/event/add',
         arguments: EventRegisterPageArguments(
             currentDate: Provider.of<CalendarViewModel>(context, listen: false)

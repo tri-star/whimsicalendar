@@ -70,20 +70,20 @@ class TopPage extends StatelessWidget {
     //FirebaseCrashlytics.instance.log('test message.');
     //FirebaseCrashlytics.instance.crash();
     try {
-      //throw StateError('test error3');
-      const List list = [];
-      print(list[100]);
-      final registered = await Navigator.of(context).pushNamed('/event/add',
-          arguments: EventRegisterPageArguments(
-              currentDate: Provider.of<CalendarViewModel>(context, listen: false)
-                  .currentDate));
+      throw StateError('test error4');
+      // const List list = [];
+      // print(list[100]);
+      // final registered = await Navigator.of(context).pushNamed('/event/add',
+      //     arguments: EventRegisterPageArguments(
+      //         currentDate: Provider.of<CalendarViewModel>(context, listen: false)
+      //             .currentDate));
 
-      if (registered == true) {
-        Scaffold.of(context).showSnackBar(SnackBar(content: Text('登録しました。')));
-        CalendarViewModel viewModel =
-            Provider.of<CalendarViewModel>(context, listen: false);
-        viewModel.loadEventList();
-      }
+      // if (registered == true) {
+      //   Scaffold.of(context).showSnackBar(SnackBar(content: Text('登録しました。')));
+      //   CalendarViewModel viewModel =
+      //       Provider.of<CalendarViewModel>(context, listen: false);
+      //   viewModel.loadEventList();
+      // }
     } catch(e, s) {
       FirebaseCrashlytics.instance.recordError(e, s);
     }

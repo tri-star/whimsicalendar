@@ -10,9 +10,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
-  Crashlytics.instance.enableInDevMode = true;
-  FlutterError.onError = Crashlytics.instance.recordFlutterError;
-  runZoned<Future<void>>(() async {
+  FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  runZonedGuarded<Future<void>>(() async {
     runApp(Application());
-  }, onError: Crashlytics.instance.recordError);
+  }, (e, s) async => await FirebaseCrashlytics.instance.recordError(e, s));
 }
